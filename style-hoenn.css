@@ -1,0 +1,18 @@
+/* ---------------------------- */
+/* Región Hoenn */
+#gbGames {
+  background-color: #c0e0f0; /* Azul claro retro */
+  border: 6px solid #006400; /* Verde oscuro */
+  box-shadow: inset -3px -3px 0 #00bfff, inset 3px 3px 0 #006400;
+}
+
+.games {
+  background-image: url("../images/region/hoenn.jpg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+#pokedex {
+  border-color: mediumseagreen; /* Verde Hoenn */
+}
