@@ -6,6 +6,7 @@
   <link rel="stylesheet" href="style-global.css">
   <link rel="stylesheet" href="style-kanto.css" id="region-style">
   <link rel="stylesheet" href="style-johto.css">
+  <link rel="stylesheet" href="style-hoenn.css">
   <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
 </head>
 <body>
@@ -15,8 +16,14 @@
   <!-- Título principal -->
   <h1>Selecciona tu juego</h1>
 
-  <!-- Contenedor donde JS generará las consolas y juegos -->
-  <div id="gbGames"></div>
+  <!-- Carousel contenedor -->
+  <div class="carousel-wrapper">
+    <div class="arrow-up">⬆</div>
+    <div id="gbGames" class="carousel-container">
+      <!-- JS generará las consolas y juegos aquí -->
+    </div>
+    <div class="arrow-down">⬇</div>
+  </div>
 
   <!-- Pokedex -->
   <div id="pokedex">

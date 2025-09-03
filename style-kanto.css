@@ -1,7 +1,7 @@
-/* Contenedor de consola Kanto */
+/* Kanto */
 .console-container.kanto {
-  background-color: #456e34;
-  border: 3px solid #0f380f;
+  background-color: #d27d27;
+  border: 3px solid #000;
   border-radius: 10px;
   background-image: url("../images/region/kanto.jpg");
   background-position: center;
@@ -12,7 +12,7 @@
 
 /* Botones de juego Kanto */
 .console-container.kanto .gameList button {
-  background: #e0f8d0;
+  background: #f0e0c0;
   border: 3px solid #0f380f;
   border-radius: 10px;
   padding: 0.2rem;
@@ -24,6 +24,13 @@
 
 .console-container.kanto .gameList button:hover {
   transform: scale(1.05);
-  background: #c0e8a0;
+  background: #e0d890;
   box-shadow: 0 0 8px #0f380f;
+}
+
+/* Consola seleccionada */
+.console-container.selected {
+  box-shadow: 0 0 15px #fff inset, 0 0 15px #000;
+  transform: scale(1.02);
+  transition: transform 0.3s, box-shadow 0.3s;
 }

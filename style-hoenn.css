@@ -1,18 +1,29 @@
-/* ---------------------------- */
-/* Región Hoenn */
-#gbGames {
-  background-color: #c0e0f0; /* Azul claro retro */
-  border: 6px solid #006400; /* Verde oscuro */
-  box-shadow: inset -3px -3px 0 #00bfff, inset 3px 3px 0 #006400;
-}
-
-.games {
+/* Contenedor de consola Hoenn */
+.console-container.hoenn {
+  background-color: #4a90e2;
+  border: 3px solid #0f380f;
+  border-radius: 10px;
   background-image: url("../images/region/hoenn.jpg");
-  background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
+  background-size: cover;
+  box-sizing: border-box;
 }
 
-#pokedex {
-  border-color: mediumseagreen; /* Verde Hoenn */
+/* Botones de juego Hoenn */
+.console-container.hoenn .gameList button {
+  background: #d0f0c0;
+  border: 3px solid #0f380f;
+  border-radius: 10px;
+  padding: 0.2rem;
+  cursor: pointer;
+  text-align: center;
+  font-size: 10px;
+  transition: transform 0.2s, box-shadow 0.2s, background 0.2s;
+}
+
+.console-container.hoenn .gameList button:hover {
+  transform: scale(1.05);
+  background: #b8e0a0;
+  box-shadow: 0 0 8px #0f380f;
 }

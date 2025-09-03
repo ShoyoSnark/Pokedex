@@ -5,7 +5,7 @@ body {
   background: #9bbc0f;
   background-image: url("./images/fondo/pokedex-pokeball.png");
   background-position: center;
-  background-attachment: fixed; /* hace efecto parallax en PC */
+  background-attachment: fixed;
   background-repeat: no-repeat;
   background-size: cover;
   margin: 0;
@@ -16,10 +16,14 @@ body {
   color: #172b12;
 }
 
+/* Clase para ocultar elementos */
+.hidden {
+  display: none !important;
+}
+
 header {
   background: #172b12;
   border: 10px solid #0f1b0b;
-  
   color: #fff;
   width: 100%;
   text-align: center;
@@ -40,51 +44,129 @@ header {
 }
 
 /* ---------------------------- */
-/* Menú de selección de juegos */
-#gbGames {
-  text-align: center;
-  margin-top: 0.5rem;
-  display:flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 2rem;
+/* Carousel vertical */
+.carousel-wrapper {
+  position: relative;
   width: 50%;
-
+  max-height: 290px; 
+  overflow: hidden;
+  margin: 0 auto;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  padding: 10px 0; 
+  border-radius: 10px;
 }
 
-.consoleIcon img{
-  height: 200px;
+/* Degradado superior e inferior para indicar scroll */
+.carousel-wrapper::before,
+.carousel-wrapper::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: 40px;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.carousel-wrapper::before {
+  top: 0;
+  background: linear-gradient(to bottom, rgba(0,0,0,0.2), transparent); /* más claro */
+}
+
+.carousel-wrapper::after {
+  bottom: 0;
+  background: linear-gradient(to top, rgba(0,0,0,0.2), transparent); /* más claro */
+}
+
+/* Iconos de flechas */
+.carousel-wrapper .arrow-up,
+.carousel-wrapper .arrow-down {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 25px;
+  color: #fff;
+  text-shadow: 2px 2px #000;
+  pointer-events: none;
+  z-index: 3;
+}
+
+.carousel-wrapper .arrow-up { top: 5px; }
+.carousel-wrapper .arrow-down { bottom: 5px; }
+
+/* Contenedor de consolas */
+.carousel-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: transform 0.3s ease-in-out;
+}
+
+/* Mantener dimensiones de consolas */
+.console-container {
+  width: 900px;
+  height: 290px;
+  margin-bottom: 15px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  overflow: hidden;
+  box-sizing: border-box;
+  transition: transform 0.3s;
+}
+
+.console-container.selected {
+  box-shadow: 0 0 15px #fff inset, 0 0 15px #000;
+  transform: scale(1.02);
+  transform-origin: top center; /* crecimiento hacia abajo */
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+/* Ajuste de la imagen de la consola */
+.consoleIcon {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.consoleIcon img {
+  max-height: 130px;
+  object-fit: contain;
+  display: block;
+  margin-left: -15px;
 }
 
 .gameList {
   display: flex;
   flex-wrap: wrap;
-  gap: 2rem;
-  padding: 15px 0px 15px 0px;
-  justify-content: center; /* centra horizontalmente los botones */
-  align-items: center;     /* centra verticalmente los botones respecto al contenedor */
+  gap: 1rem;
+  justify-content: center;
+  align-items: center;
 }
 
 .consoleIcon h1 {
-    font-family: 'Press Start 2P', monospace;
-    font-size: 18px;
-    color: black;
-    text-shadow:
-    3px 3px 0 #ffffff,
-    -3px 3px 0 #ffffff,
-    -3px -3px 0 #ffffff,
-    3px -3px 0 #ffffff;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 25px;
+  color: black;
+  text-shadow:
+  3px 3px 0 #ffffff,
+  -3px 3px 0 #ffffff,
+  -3px -3px 0 #ffffff,
+  3px -3px 0 #ffffff;
 }
 
 h1 {
-    font-family: 'Press Start 2P', monospace;
-    font-size: 25px;
-    color: #000000;
-    text-shadow:
-    3px 3px 0 #ffffff,
-    -3px 3px 0 #ffffff,
-    -3px -3px 0 #ffffff,
-    3px -3px 0 #ffffff;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 25px;
+  color: #000000;
+  text-shadow:
+  3px 3px 0 #ffffff,
+  -3px 3px 0 #ffffff,
+  -3px -3px 0 #ffffff,
+  3px -3px 0 #ffffff;
 }
 
 .games {
@@ -104,14 +186,14 @@ h1 {
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: 180px;       /* ancho fijo */
-  height:200px;     /* alto fijo */
-  flex-shrink: 0;    /* evita que se reduzcan si el contenedor crece */
+  width: 180px;
+  height: 200px;
+  flex-shrink: 0;
 }
 
 .games button img {
-  width: 160px;       /* ancho fijo de la imagen */
-  height: 160px;      /* alto fijo de la imagen */
+  width: 160px;
+  height: 160px;
   border-radius: 6px;
   object-fit: cover;
   display: block;
@@ -212,7 +294,6 @@ h1 {
   transition: border-color 0.2s;
 }
 
-/* Hover: borde rojo y sprite a color */
 .pokemon-card:hover {
   border-color: red;
 }
@@ -281,7 +362,6 @@ h1 {
   border: 4px solid #0f380f;
   display: inline-block;
   border-radius: 6px;
-
 }
 
 .sprite-frame img {
