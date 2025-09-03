@@ -1,7 +1,7 @@
 /* Contenedor de consola Kanto */
 .console-container.kanto {
   background-color: #456e34;
-  border: 2px solid #0f380f;
+  border: 3px solid #0f380f;
   border-radius: 10px;
   background-image: url("../images/region/kanto.jpg");
   background-position: center;
