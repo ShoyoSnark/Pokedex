@@ -6,7 +6,6 @@ const pokemonList = document.getElementById("pokemon-list");
 const gameCover = document.getElementById("game-cover");
 const gameName = document.getElementById("game-name");
 const searchInput = document.getElementById("searchInput");
-const regionStyle = document.getElementById("region-style");
 
 // Modal
 const modal = document.getElementById("pokemon-modal");
@@ -28,21 +27,21 @@ const consoles = [
   {
     name: "GameBoy",
     img: "./images/consolas/gameBoy.png",
-    region: "kanto",
+    cssClass: "kanto", // Clase CSS propia
     games: [
-      { id: "red", title: "Pokémon Rojo", cover: "./images/caratulas/caratulaPokemonRojo.jpg", borderColor: "red", style: "style-kanto.css" },
-      { id: "blue", title: "Pokémon Azul", cover: "./images/caratulas/caratulaPokemonAzul.jpg", borderColor: "blue", style: "style-kanto.css" },
-      { id: "yellow", title: "Pokémon Amarillo", cover: "./images/caratulas/caratulaPokemonAmarillo.jpg", borderColor: "gold", style: "style-kanto.css" }
+      { id: "red", title: "Pokémon Rojo", cover: "./images/caratulas/caratulaPokemonRojo.jpg", borderColor: "red", offset: 0, limit: 151 },
+      { id: "blue", title: "Pokémon Azul", cover: "./images/caratulas/caratulaPokemonAzul.jpg", borderColor: "blue", offset: 0, limit: 151 },
+      { id: "yellow", title: "Pokémon Amarillo", cover: "./images/caratulas/caratulaPokemonAmarillo.jpg", borderColor: "gold", offset: 0, limit: 151 }
     ]
   },
   {
     name: "GameBoy<br>Color",
     img: "./images/consolas/gameBoyColor.png",
-    region: "johto",
+    cssClass: "johto", // Clase CSS propia
     games: [
-      { id: "gold", title: "Pokémon Oro", cover: "./images/caratulas/caratulaPokemonOro.jpg", borderColor: "gold", style: "style-johto.css" },
-      { id: "silver", title: "Pokémon Plata", cover: "./images/caratulas/caratulaPokemonPlata.jpg", borderColor: "#c0c0c0", style: "style-johto.css" },
-      { id: "crystal", title: "Pokémon Cristal", cover: "./images/caratulas/caratulaPokemonCristal.jpg", borderColor: "#a7d8de", style: "style-johto.css" }
+      { id: "gold", title: "Pokémon Oro", cover: "./images/caratulas/caratulaPokemonOro.jpg", borderColor: "gold", offset: 151, limit: 100 },
+      { id: "silver", title: "Pokémon Plata", cover: "./images/caratulas/caratulaPokemonPlata.jpg", borderColor: "#c0c0c0", offset: 151, limit: 100 },
+      { id: "crystal", title: "Pokémon Cristal", cover: "./images/caratulas/caratulaPokemonCristal.jpg", borderColor: "#a7d8de", offset: 151, limit: 100 }
     ]
   }
 ];
@@ -50,42 +49,35 @@ const consoles = [
 // ----------------------------
 // Generar menú de consolas y juegos dinámicamente
 function generateGameMenu() {
-  menuGbGames.innerHTML = ""; // limpiar
+  menuGbGames.innerHTML = "";
 
   consoles.forEach(console => {
     const gamesDiv = document.createElement("div");
-    gamesDiv.className = `games console-container ${console.region}`;
+    gamesDiv.className = `games console-container ${console.cssClass}`;
 
-    // Consola a la izquierda
     const consoleIcon = document.createElement("div");
     consoleIcon.className = "consoleIcon";
-    consoleIcon.innerHTML = `<h1>${console.name}</h1><img src="${console.img}" height="200" alt="Consola ${console.name}">`;
+    consoleIcon.innerHTML = `<h1>${console.name}</h1><img src="${console.img}" alt="Consola ${console.name}">`;
 
-    // Lista de juegos a la derecha
     const gameList = document.createElement("div");
     gameList.className = "gameList";
 
     console.games.forEach(game => {
       const btn = document.createElement("button");
-      btn.onclick = () => loadPokedex(game.id);
+      btn.onclick = () => loadPokedex(game);
       btn.innerHTML = `<img src="${game.cover}" alt="${game.title}"><p>${game.title}</p>`;
       gameList.appendChild(btn);
     });
 
-    // Añadir ambos al contenedor
     gamesDiv.appendChild(consoleIcon);
     gamesDiv.appendChild(gameList);
-
     menuGbGames.appendChild(gamesDiv);
   });
 }
 
 // ----------------------------
 // Cargar Pokédex según juego
-function loadPokedex(gameId) {
-  const game = consoles.flatMap(c => c.games).find(g => g.id === gameId);
-  if (!game) return;
-
+async function loadPokedex(game) {
   menuGbGames.style.display = "none";
   pokedex.style.display = "block";
 
@@ -94,9 +86,7 @@ function loadPokedex(gameId) {
   gameCover.alt = game.title;
   gameName.textContent = game.title;
 
-  regionStyle.href = game.style;
-
-  loadPokemonList();
+  await loadPokemonList(game);
 }
 
 // ----------------------------
@@ -105,6 +95,7 @@ function goBack() {
   pokedex.style.display = "none";
   menuGbGames.style.display = "flex";
   pokemonList.innerHTML = "";
+  // No tocamos CSS de los contenedores, los estilos se mantienen gracias a las clases
 }
 
 // ----------------------------
@@ -113,23 +104,23 @@ closeModal.onclick = () => modal.style.display = "none";
 window.onclick = (event) => { if (event.target === modal) modal.style.display = "none"; };
 
 // ----------------------------
-// Cargar lista de Pokémon (151 inicial)
-async function loadPokemonList() {
+// Cargar lista de Pokémon
+async function loadPokemonList(game) {
   pokemonList.innerHTML = "<p>Cargando Pokémon...</p>";
 
   try {
-    const response = await fetch("https://pokeapi.co/api/v2/pokemon?offset=0&limit=151");
+    const response = await fetch(`https://pokeapi.co/api/v2/pokemon?offset=${game.offset}&limit=${game.limit}`);
     const data = await response.json();
     pokemonList.innerHTML = "";
 
     data.results.forEach((poke, index) => {
-      const pokemonId = index + 1;
+      const pokemonId = game.offset + index + 1;
       const pokemonName = capitalizeFirstLetter(poke.name);
 
       const card = document.createElement("div");
       card.className = "pokemon-card";
       card.innerHTML = `
-        <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-i/red-blue/${pokemonId}.png" alt="${pokemonName}">
+        <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${pokemonId}.png" alt="${pokemonName}">
         <p>#${pokemonId}<br>${pokemonName}</p>
       `;
 
@@ -142,27 +133,28 @@ async function loadPokemonList() {
     });
 
     // Filtro de búsqueda
-    searchInput.addEventListener("input", () => filterPokemon(data.results));
+    searchInput.oninput = () => filterPokemon(data.results, game);
   } catch (error) {
     console.error(error);
     pokemonList.innerHTML = "<p>Error cargando Pokémon.</p>";
   }
 }
 
-// Filtrar Pokémon por búsqueda
-function filterPokemon(pokemons) {
+// ----------------------------
+// Filtrar Pokémon
+function filterPokemon(pokemons, game) {
   const query = searchInput.value.toLowerCase();
   pokemonList.innerHTML = "";
 
   pokemons.forEach((poke, index) => {
     if (!poke.name.includes(query)) return;
-    const pokemonId = index + 1;
+    const pokemonId = game.offset + index + 1;
     const pokemonName = capitalizeFirstLetter(poke.name);
 
     const card = document.createElement("div");
     card.className = "pokemon-card";
     card.innerHTML = `
-      <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-i/red-blue/${pokemonId}.png" alt="${pokemonName}">
+      <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${pokemonId}.png" alt="${pokemonName}">
       <p>#${pokemonId}<br>${pokemonName}</p>
     `;
     card.addEventListener("click", async () => {
@@ -182,7 +174,7 @@ async function showModal(pokemon) {
 
   modalName.textContent = `#${pokemon.id} ${capitalizeFirstLetter(pokemon.name)}`;
   modalNumber.textContent = `Nº: ${pokemon.id}`;
-  modalSprite.src = pokemon.sprites.versions["generation-i"]["red-blue"].front_default;
+  modalSprite.src = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${pokemon.id}.png`;
   modalType.textContent = "Tipo: " + pokemon.types.map(t => translateType(t.type.name)).join(" / ");
   modalHeight.textContent = `Altura: ${(pokemon.height / 10).toFixed(1)}m`;
   modalWeight.textContent = `Peso: ${(pokemon.weight / 10).toFixed(1)}kg`;

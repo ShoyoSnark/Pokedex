@@ -3,6 +3,11 @@
 body {
   font-family: 'Press Start 2P', monospace;
   background: #9bbc0f;
+  background-image: url("./images/fondo/pokedex-pokeball.png");
+  background-position: center;
+  background-attachment: fixed; /* hace efecto parallax en PC */
+  background-repeat: no-repeat;
+  background-size: cover;
   margin: 0;
   padding: 0;
   display: flex;
@@ -12,7 +17,9 @@ body {
 }
 
 header {
-  background: #0f380f;
+  background: #172b12;
+  border: 10px solid #0f1b0b;
+  
   color: #fff;
   width: 100%;
   text-align: center;
@@ -37,29 +44,30 @@ header {
 #gbGames {
   text-align: center;
   margin-top: 0.5rem;
-  display: flex;
+  display:flex;
   flex-wrap: wrap;
   justify-content: center;
-  gap: 3rem;
-  width: 78%;
+  gap: 2rem;
+  width: 50%;
+
 }
 
-.consoleIcon {
-  min-width: 200px;
+.consoleIcon img{
+  height: 200px;
 }
 
 .gameList {
-    min-width: 200px;
-    padding: 15px 0px 15px 0px;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 5rem;
-    justify-content: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+  padding: 15px 0px 15px 0px;
+  justify-content: center; /* centra horizontalmente los botones */
+  align-items: center;     /* centra verticalmente los botones respecto al contenedor */
 }
 
 .consoleIcon h1 {
     font-family: 'Press Start 2P', monospace;
-    font-size: 25px;
+    font-size: 18px;
     color: black;
     text-shadow:
     3px 3px 0 #ffffff,
@@ -67,10 +75,11 @@ header {
     -3px -3px 0 #ffffff,
     3px -3px 0 #ffffff;
 }
+
 h1 {
     font-family: 'Press Start 2P', monospace;
     font-size: 25px;
-    color: #0f380f;
+    color: #000000;
     text-shadow:
     3px 3px 0 #ffffff,
     -3px 3px 0 #ffffff,
@@ -92,13 +101,20 @@ h1 {
   padding: 0.2rem;
   cursor: pointer;
   border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 180px;       /* ancho fijo */
+  height:200px;     /* alto fijo */
+  flex-shrink: 0;    /* evita que se reduzcan si el contenedor crece */
 }
 
 .games button img {
-  width: 160px;
-  height: 160px;
-  border-radius: 10px;
-  display: flexbox;
+  width: 160px;       /* ancho fijo de la imagen */
+  height: 160px;      /* alto fijo de la imagen */
+  border-radius: 6px;
+  object-fit: cover;
+  display: block;
 }
 
 .games button p {
@@ -261,11 +277,11 @@ h1 {
 
 /* Marco estilo Game Boy para sprite */
 .sprite-frame {
-  background: #9bbc0f;
+  background: #d4d4d2;
   border: 4px solid #0f380f;
   display: inline-block;
   border-radius: 6px;
-  box-shadow: inset -2px -2px 0 #d0e0b0, inset 2px 2px 0 #0f380f;
+
 }
 
 .sprite-frame img {

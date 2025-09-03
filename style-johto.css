@@ -1,27 +1,19 @@
-/* Estilos específicos para región Johto */
-
 /* Contenedor de consola Johto */
 .console-container.johto {
-  background-color: #2e5d27; /* Verde oscuro retro Johto */
-  border: 5px solid #0f380f;
+  background-color: #2e5d27;
+  border: 2px solid #0f380f;
   border-radius: 10px;
-  max-width: 65%; /* opcional */
-  min-width: 65%; /* opcional */
-  display: flex;
-  justify-content:space-around;
-  align-items: center;
   background-image: url("../images/region/johto.jpg");
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
-  box-sizing: border-box; /* incluye padding y border en el ancho total */
+  box-sizing: border-box;
 }
-
 
 /* Botones de juego Johto */
 .console-container.johto .gameList button {
   background: #f0e8c0;
-  border: 4px solid #0f380f;
+  border: 3px solid #0f380f;
   border-radius: 10px;
   padding: 0.2rem;
   cursor: pointer;
