@@ -15,11 +15,16 @@ body {
   align-items: center;
   color: #172b12;
 }
-
-/* Clase para ocultar elementos */
-.hidden {
-  display: none !important;
+.selection-body {
+  color: black;
+  text-shadow:
+  3px 3px 0 #ffffff,
+  -3px 3px 0 #ffffff,
+  -3px -3px 0 #ffffff,
+  3px -3px 0 #ffffff;
 }
+
+.hidden { display: none !important; }
 
 header {
   background: #172b12;
@@ -27,105 +32,104 @@ header {
   color: #fff;
   width: 100%;
   text-align: center;
-  padding: 1rem;
-  font-size: 2rem;
+  padding: 1cqw;
+  font-size: 3rem;
   font-weight: bold;
   font-family: 'Press Start 2P', monospace;
-  text-shadow: 3px 3px 0 #000,
-               -3px 3px 0 #000,
-               -3px -3px 0 #000,
-               3px -3px 0 #000,
-               3px 0 0 #000,
-               0 3px 0 #000,
-               -3px 0 0 #000,
-               0 -3px 0 #000;
+  text-shadow:
+  4px 4px 0 #000000,
+  -4px 4px 0 #000000,
+  -4px -4px 0 #000000,
+  4px -4px 0 #000000;
   letter-spacing: 1px;
   line-height: 1.2em;
+}
+
+/* ---------------------------- */
+/* Flechas fuera del carousel */
+.carousel-main-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 20px 0;
+  width: 100%;
+  max-width: 1050px;
+  position: relative;
+}
+
+.arrow-up,
+.arrow-down {
+  font-size: 150px;
+  color: #fff;
+  text-shadow: 3px 3px #000;
+  cursor: pointer;
+  user-select: none;
+  transition: color 0.2s, text-shadow 0.2s;
+}
+
+.arrow-up:hover,
+.arrow-down:hover {
+  color: #ffeb3b;
+  text-shadow: 2px 2px #000, 0 0 10px #ffeb3b;
 }
 
 /* ---------------------------- */
 /* Carousel vertical */
 .carousel-wrapper {
   position: relative;
-  width: 50%;
-  max-height: 290px; 
-  overflow: hidden;
-  margin: 0 auto;
-  cursor: pointer;
-  display: flex;
-  justify-content: center;
-  padding: 10px 0; 
-  border-radius: 10px;
-}
-
-/* Degradado superior e inferior para indicar scroll */
-.carousel-wrapper::before,
-.carousel-wrapper::after {
-  content: "";
-  position: absolute;
-  left: 0;
   width: 100%;
-  height: 40px;
-  pointer-events: none;
-  z-index: 2;
+  height: 600px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 
-.carousel-wrapper::before {
-  top: 0;
-  background: linear-gradient(to bottom, rgba(0,0,0,0.2), transparent); /* más claro */
-}
-
-.carousel-wrapper::after {
-  bottom: 0;
-  background: linear-gradient(to top, rgba(0,0,0,0.2), transparent); /* más claro */
-}
-
-/* Iconos de flechas */
-.carousel-wrapper .arrow-up,
-.carousel-wrapper .arrow-down {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 25px;
-  color: #fff;
-  text-shadow: 2px 2px #000;
-  pointer-events: none;
-  z-index: 3;
-}
-
-.carousel-wrapper .arrow-up { top: 5px; }
-.carousel-wrapper .arrow-down { bottom: 5px; }
-
-/* Contenedor de consolas */
 .carousel-container {
   display: flex;
   flex-direction: column;
   align-items: center;
-  transition: transform 0.3s ease-in-out;
 }
 
-/* Mantener dimensiones de consolas */
+/* Contenedores de consola con profundidad 3D */
 .console-container {
-  width: 900px;
+  width: 800px;
   height: 290px;
-  margin-bottom: 15px;
-  flex-shrink: 0;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  overflow: hidden;
-  box-sizing: border-box;
-  transition: transform 0.3s;
+  margin: -80px 0;
+  transition: transform 0.5s ease, z-index 0.5s ease, opacity 0.5s ease;
+  z-index: 1;
+  opacity: 0.6;
+  transform: scale(0.85) translateY(0);
 }
 
 .console-container.selected {
-  box-shadow: 0 0 15px #fff inset, 0 0 15px #000;
-  transform: scale(1.02);
-  transform-origin: top center; /* crecimiento hacia abajo */
-  transition: transform 0.3s, box-shadow 0.3s;
+  transform: scale(1.1) translateY(0);
+  z-index: 10;
+  opacity: 1;
 }
 
-/* Ajuste de la imagen de la consola */
+.console-container.adjacent {
+  transform: scale(0.95) translateY(30px);
+  z-index: 5;
+  opacity: 0.8;
+}
+
+.console-container.adjacent.prev {
+  transform: scale(0.95) translateY(-30px);
+}
+
+.console-container.far {
+  transform: scale(0.9) translateY(60px);
+  z-index: 3;
+  opacity: 0.6;
+}
+
+.console-container.far.prev {
+  transform: scale(0.9) translateY(-60px);
+}
+
+/* Icono de consola y juegos */
 .consoleIcon {
   display: flex;
   flex-direction: column;
@@ -151,17 +155,6 @@ header {
   font-family: 'Press Start 2P', monospace;
   font-size: 25px;
   color: black;
-  text-shadow:
-  3px 3px 0 #ffffff,
-  -3px 3px 0 #ffffff,
-  -3px -3px 0 #ffffff,
-  3px -3px 0 #ffffff;
-}
-
-h1 {
-  font-family: 'Press Start 2P', monospace;
-  font-size: 25px;
-  color: #000000;
   text-shadow:
   3px 3px 0 #ffffff,
   -3px 3px 0 #ffffff,
@@ -199,9 +192,7 @@ h1 {
   display: block;
 }
 
-.games button p {
-  margin: 0.5rem 0 0;
-}
+.games button p { margin: 0.5rem 0 0; }
 
 /* ---------------------------- */
 /* Pokedex retro */
@@ -218,7 +209,6 @@ h1 {
   box-shadow: inset 0 0 10px #0f380f;
 }
 
-/* Botón volver */
 #backBtn {
   background: #0f380f;
   color: #fff;
@@ -229,7 +219,6 @@ h1 {
   user-select: none;
 }
 
-/* Header Pokedex */
 #pokedex-header {
   display: flex;
   align-items: center;
@@ -265,7 +254,6 @@ h1 {
   image-rendering: pixelated;
 }
 
-/* Input búsqueda */
 #searchInput {
   margin: 0.5rem 0 1rem;
   font-family: 'Press Start 2P', monospace;
@@ -275,7 +263,6 @@ h1 {
   max-width: 300px;
 }
 
-/* Lista Pokémon */
 #pokemon-list {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
@@ -294,9 +281,7 @@ h1 {
   transition: border-color 0.2s;
 }
 
-.pokemon-card:hover {
-  border-color: red;
-}
+.pokemon-card:hover { border-color: red; }
 
 .pokemon-card img {
   image-rendering: pixelated;
@@ -306,13 +291,8 @@ h1 {
   transition: filter 0.2s;
 }
 
-.pokemon-card:hover img {
-  filter: none;
-}
-
-.pokemon-card p {
-  margin: 2px 0 0;
-}
+.pokemon-card:hover img { filter: none; }
+.pokemon-card p { margin: 2px 0 0; }
 
 /* ---------------------------- */
 /* Modal retro */
@@ -346,7 +326,6 @@ h1 {
   overflow-y: auto;
 }
 
-/* Cerrar modal */
 #closeModal {
   position: absolute;
   top: 5px;
@@ -356,7 +335,6 @@ h1 {
   font-weight: bold;
 }
 
-/* Marco estilo Game Boy para sprite */
 .sprite-frame {
   background: #d4d4d2;
   border: 4px solid #0f380f;
@@ -372,17 +350,23 @@ h1 {
   margin: 0 auto;
 }
 
-.modal-right h3 {
-  margin: 0;
-  font-size: 14px;
+.modal-right h3 { margin: 0; font-size: 14px; }
+.modal-right p { margin: 4px 0; font-size: 12px; }
+#modal-description { margin-top: 1rem; font-size: 12px; }
+
+/* ---------------------------- */
+/* Carousel responsivo */
+@media (max-width: 1000px) {
+  .carousel-wrapper { width: 80%; }
+  .console-container { width: 100%; height: auto; }
+  .games button { width: 140px; height: 160px; }
+  .games button img { width: 120px; height: 120px; }
+  .consoleIcon img { max-height: 100px; }
 }
 
-.modal-right p {
-  margin: 4px 0;
-  font-size: 12px;
-}
-
-#modal-description {
-  margin-top: 1rem;
-  font-size: 12px;
+@media (max-width: 600px) {
+  .carousel-wrapper { width: 95%; }
+  .games button { width: 120px; height: 140px; }
+  .games button img { width: 100px; height: 100px; }
+  .consoleIcon h1 { font-size: 18px; }
 }

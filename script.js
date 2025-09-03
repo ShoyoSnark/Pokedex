@@ -7,7 +7,6 @@ const gameCover = document.getElementById("game-cover");
 const gameName = document.getElementById("game-name");
 const searchInput = document.getElementById("searchInput");
 
-// Modal
 const modal = document.getElementById("pokemon-modal");
 const closeModal = document.getElementById("closeModal");
 const modalName = document.getElementById("modal-name");
@@ -18,13 +17,18 @@ const modalWeight = document.getElementById("modal-weight");
 const modalDescription = document.getElementById("modal-description");
 const modalSprite = document.getElementById("modal-sprite");
 
-// Sonido beep
 const beepSound = document.getElementById("beep-sound");
+// Pre-cargar y reproducir en silencio al inicio para evitar retraso
+beepSound.volume = 0;
+beepSound.play().catch(() => {}); // ignora el error de autoplay
+beepSound.pause();
+beepSound.currentTime = 0;
+beepSound.volume = 0.1;
 
-// Carousel
 const carouselWrapper = document.querySelector(".carousel-wrapper");
 const carouselContainer = document.querySelector(".carousel-container");
-let currentIndex = 0;
+const arrowUp = document.querySelector(".arrow-up");
+const arrowDown = document.querySelector(".arrow-down");
 
 // ----------------------------
 // Consolas y juegos
@@ -62,9 +66,10 @@ const consoles = [
 ];
 
 // ----------------------------
-// Generar menú de consolas y juegos dinámicamente
+// Generar menú dinámico
 function generateGameMenu() {
   menuGbGames.innerHTML = "";
+  carouselContainer.innerHTML = "";
 
   consoles.forEach(console => {
     const gamesDiv = document.createElement("div");
@@ -89,18 +94,77 @@ function generateGameMenu() {
     carouselContainer.appendChild(gamesDiv);
   });
 
-  // Seleccionamos el primer contenedor por defecto
-  carouselContainer.children[0].classList.add("selected");
+  // ----------------------------
+  // Centrar GameBoy al inicio
+  const items = Array.from(carouselContainer.children);
+  const gameBoyIndex = items.findIndex(c => c.classList.contains("kanto"));
+  const middleIndex = Math.floor(items.length / 2);
+
+  if (gameBoyIndex !== middleIndex) {
+    const shiftCount = middleIndex - gameBoyIndex+1;
+    if (shiftCount > 0) {
+      for (let i = 0; i < shiftCount; i++) {
+        const first = carouselContainer.firstChild;
+        carouselContainer.appendChild(first);
+      }
+    } else {
+      for (let i = 0; i < Math.abs(shiftCount); i++) {
+        const last = carouselContainer.lastChild;
+        carouselContainer.insertBefore(last, carouselContainer.firstChild);
+      }
+    }
+  }
+
+  updateSelected();
 }
 
 // ----------------------------
-// Cargar Pokédex según juego
+// Carousel tipo ruleta 3D
+function rotateCarousel(direction) {
+  const items = Array.from(carouselContainer.children);
+
+  if (direction === "up") {
+    const last = items.pop();
+    carouselContainer.insertBefore(last, items[0]);
+  } else if (direction === "down") {
+    const first = items.shift();
+    carouselContainer.appendChild(first);
+  }
+
+  requestAnimationFrame(() => updateSelected());
+}
+
+function updateSelected() {
+  const items = Array.from(carouselContainer.children);
+  items.forEach(item => {
+    item.classList.remove("selected", "adjacent", "prev", "far");
+    // Bloquear botones de los no seleccionados
+    const buttons = item.querySelectorAll("button");
+    buttons.forEach(btn => btn.disabled = true);
+  });
+
+  const middleIndex = Math.floor(items.length / 2);
+  const selectedItem = items[middleIndex];
+  selectedItem.classList.add("selected");
+
+  const buttons = selectedItem.querySelectorAll("button");
+  buttons.forEach(btn => btn.disabled = false);
+
+  if (items[middleIndex - 1]) items[middleIndex - 1].classList.add("adjacent", "prev");
+  if (items[middleIndex + 1]) items[middleIndex + 1].classList.add("adjacent");
+
+  if (items[middleIndex - 2]) items[middleIndex - 2].classList.add("far", "prev");
+  if (items[middleIndex + 2]) items[middleIndex + 2].classList.add("far");
+}
+
+// ----------------------------
+// Cargar Pokédex
 async function loadPokedex(game) {
   menuGbGames.style.display = "none";
   pokedex.style.display = "block";
-
-  // Ocultar carousel en vista de pokedex
   carouselWrapper.style.display = "none";
+  arrowUp.style.display = "none";
+  arrowDown.style.display = "none";
 
   pokedex.style.borderColor = game.borderColor;
   gameCover.src = game.cover;
@@ -111,35 +175,28 @@ async function loadPokedex(game) {
 }
 
 // ----------------------------
-// Volver al menú principal
+// Volver al menú
 function goBack() {
   pokedex.style.display = "none";
   menuGbGames.style.display = "flex";
-
-  // Mostrar carousel y flechas
   carouselWrapper.style.display = "flex";
-
-  // Restaurar la posición del carousel al contenedor seleccionado previamente
-  Array.from(carouselContainer.children).forEach(item => item.classList.remove("selected"));
-  carouselContainer.children[currentIndex].classList.add("selected");
-
-  const itemHeight = carouselContainer.children[0].offsetHeight + 15;
-  const translateY = -currentIndex * itemHeight;
-  carouselContainer.style.transform = `translateY(${translateY}px)`;
-
+  arrowUp.style.display = "block";
+  arrowDown.style.display = "block";
+  updateSelected();
   pokemonList.innerHTML = "";
 }
 
+document.getElementById("backBtn").onclick = goBack;
+
 // ----------------------------
-// Cerrar modal
+// Modal
 closeModal.onclick = () => modal.style.display = "none";
 window.onclick = (event) => { if (event.target === modal) modal.style.display = "none"; };
 
 // ----------------------------
-// Cargar lista de Pokémon
+// Lista Pokémon
 async function loadPokemonList(game) {
   pokemonList.innerHTML = "<p>Cargando Pokémon...</p>";
-
   try {
     const response = await fetch(`https://pokeapi.co/api/v2/pokemon?offset=${game.offset}&limit=${game.limit}`);
     const data = await response.json();
@@ -151,20 +208,16 @@ async function loadPokemonList(game) {
 
       const card = document.createElement("div");
       card.className = "pokemon-card";
-      card.innerHTML = `
-        <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${pokemonId}.png" alt="${pokemonName}">
-        <p>#${pokemonId}<br>${pokemonName}</p>
-      `;
-
+      card.innerHTML = `<img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${pokemonId}.png" alt="${pokemonName}"><p>#${pokemonId}<br>${pokemonName}</p>`;
       card.addEventListener("click", async () => {
+        beepSound.currentTime = 0;
+        beepSound.play();
         const pokeData = await fetch(poke.url).then(res => res.json());
         showModal(pokeData);
       });
-
       pokemonList.appendChild(card);
     });
 
-    // Filtro de búsqueda
     searchInput.oninput = () => filterPokemon(data.results, game);
   } catch (error) {
     console.error(error);
@@ -177,7 +230,6 @@ async function loadPokemonList(game) {
 function filterPokemon(pokemons, game) {
   const query = searchInput.value.toLowerCase();
   pokemonList.innerHTML = "";
-
   pokemons.forEach((poke, index) => {
     if (!poke.name.includes(query)) return;
     const pokemonId = game.offset + index + 1;
@@ -185,25 +237,20 @@ function filterPokemon(pokemons, game) {
 
     const card = document.createElement("div");
     card.className = "pokemon-card";
-    card.innerHTML = `
-      <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${pokemonId}.png" alt="${pokemonName}">
-      <p>#${pokemonId}<br>${pokemonName}</p>
-    `;
+    card.innerHTML = `<img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${pokemonId}.png" alt="${pokemonName}"><p>#${pokemonId}<br>${pokemonName}</p>`;
     card.addEventListener("click", async () => {
+      beepSound.currentTime = 0;
+      beepSound.play();
       const pokeData = await fetch(poke.url).then(res => res.json());
       showModal(pokeData);
     });
-
     pokemonList.appendChild(card);
   });
 }
 
 // ----------------------------
-// Mostrar modal
+// Modal
 async function showModal(pokemon) {
-  beepSound.currentTime = 0;
-  beepSound.play();
-
   modalName.textContent = `#${pokemon.id} ${capitalizeFirstLetter(pokemon.name)}`;
   modalNumber.textContent = `Nº: ${pokemon.id}`;
   modalSprite.src = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${pokemon.id}.png`;
@@ -219,51 +266,24 @@ async function showModal(pokemon) {
 }
 
 // ----------------------------
-// Funciones auxiliares
+// Auxiliares
 function capitalizeFirstLetter(string) {
   return string.charAt(0).toUpperCase() + string.slice(1);
 }
 
 function translateType(type) {
   const typesES = {
-    normal:"Normal", fire:"Fuego", water:"Agua", electric:"Eléctrico",
-    grass:"Planta", ice:"Hielo", fighting:"Lucha", poison:"Veneno",
-    ground:"Tierra", flying:"Volador", psychic:"Psíquico", bug:"Bicho",
-    rock:"Roca", ghost:"Fantasma", dark:"Siniestro", dragon:"Dragón",
-    steel:"Acero", fairy:"Hada"
+    normal:"Normal", fighting:"Lucha", flying:"Volador", poison:"Veneno", ground:"Tierra", rock:"Roca",
+    bug:"Bicho", ghost:"Fantasma", steel:"Acero", fire:"Fuego", water:"Agua", grass:"Planta", electric:"Eléctrico",
+    psychic:"Psíquico", ice:"Hielo", dragon:"Dragón", dark:"Siniestro", fairy:"Hada"
   };
   return typesES[type] || type;
 }
 
 // ----------------------------
-// Inicializar menú
+// Inicializar
 generateGameMenu();
 
-// ----------------------------
-// Carousel vertical click
-carouselWrapper.addEventListener("click", (e) => {
-  // Solo permitir desplazamiento si la Pokédex está oculta
-  if (window.getComputedStyle(pokedex).display !== "none") return;
-
-  const clickY = e.offsetY;
-  const wrapperHeight = carouselWrapper.clientHeight;
-  const totalItems = carouselContainer.children.length;
-  const itemHeight = carouselContainer.children[0].offsetHeight + 15; // incluye margen
-
-  // Quitar selección previa
-  Array.from(carouselContainer.children).forEach(item => item.classList.remove("selected"));
-
-  if (clickY < wrapperHeight / 2) {
-    // Click arriba
-    currentIndex = Math.max(currentIndex - 1, 0);
-  } else {
-    // Click abajo
-    currentIndex = Math.min(currentIndex + 1, totalItems - 1);
-  }
-
-  // Aplicar clase 'selected' al contenedor actual
-  carouselContainer.children[currentIndex].classList.add("selected");
-
-  const translateY = -currentIndex * itemHeight;
-  carouselContainer.style.transform = `translateY(${translateY}px)`;
-});
+// Flechas click
+arrowUp.addEventListener("click", () => rotateCarousel("up"));
+arrowDown.addEventListener("click", () => rotateCarousel("down"));
