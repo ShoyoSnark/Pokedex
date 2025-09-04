@@ -1,4 +1,12 @@
 /* Contenedor de consola Johto */
+
+/* Header Region de Johto*/
+.johto-header {
+  background-color: #2e5d27;
+  color: #fff;
+  text-shadow: 3px 3px #000;
+}
+
 .console-container.johto {
   background-color: #2e5d27;
   border: 3px solid #0f380f;

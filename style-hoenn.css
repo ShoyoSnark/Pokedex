@@ -1,4 +1,12 @@
 /* Contenedor de consola Hoenn */
+
+/* Header Region de Hoenn*/
+.hoenn-header {
+  background-color: #4a90e2;
+  color: #fff;
+  text-shadow: 3px 3px #000;
+}
+
 .console-container.hoenn {
   background-color: #4a90e2;
   border: 3px solid #0f380f;

@@ -11,7 +11,7 @@
 </head>
 <body>
   <!-- Encabezado -->
-  <header>Pokédex</header>
+  <header class="default-header">Pokédex</header>
 
   <!-- Título principal -->
   <h1 class="selection-body">Selecciona tu juego</h1>
@@ -29,36 +29,38 @@
 
   <!-- Pokedex -->
   <div id="pokedex">
-    <button id="backBtn" onclick="goBack()">⬅ Volver</button>
-
     <div id="pokedex-header">
       <img id="game-cover" src="" alt="Carátula del juego">
       <h2><span id="game-name">Nombre del juego</span></h2>
     </div>
 
-    <input type="text" id="searchInput" placeholder="Buscar Pokémon...">
-    <div id="pokemon-list"></div>
+
+    <!-- Contenedor dividido lista y panel de detalles -->
+    <div id="pokedex-content">
+    <!-- Lista de Pokémon con scroll retro -->
+      <div id="pokemon-list-container">
+        <div id="pokemon-list"></div>
+      </div>
+
+      <!-- Panel de detalles -->
+      <div id="pokemon-details">
+        <h3 id="detail-name"></h3>
+        <img id="detail-sprite" src="" alt="Sprite Pokémon">
+        <p id="detail-type"></p>
+        <p id="detail-description"></p>
+      </div>
   </div>
 
-  <!-- Modal retro -->
-  <div id="pokemon-modal" class="modal">
-    <div class="modal-content">
-      <span id="closeModal">&times;</span>
-      <div class="modal-left">
-        <div class="sprite-frame">
-          <img id="modal-sprite" src="" alt="Pokémon">
-        </div>
-      </div>
-      <div class="modal-right">
-        <h3 id="modal-name">#001 Bulbasaur</h3>
-        <p id="modal-number">Nº: 001</p>
-        <p id="modal-type">Tipo: Planta / Veneno</p>
-        <p id="modal-height">Altura: 0.7m</p>
-        <p id="modal-weight">Peso: 6.9kg</p>
-        <p id="modal-description">Descripción: Este Pokémon ...</p>
-      </div>
+    <!-- Botones inferiores -->
+    <div id="pokedex-footer">
+      <button id="backBtn" onclick="goBack()">⬅ Volver</button>
+        <!-- Input de búsqueda oculto -->
+      <input type="text" id="searchInput" placeholder="Buscar Pokémon..." style="display:none;">
+
+      <button id="searchBtn">🔍 Buscar</button>
     </div>
   </div>
+
 
   <audio id="beep-sound" src="./sounds/pokemonAButton.mp3"></audio>
   <script src="script.js"></script>

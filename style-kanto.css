@@ -1,4 +1,32 @@
 /* Kanto */
+
+/* Header estilo Pokémon Amarillo */
+.kanto-header {
+  background-color: #ffffff; /* fondo blanco */
+  color: #000000;           /* texto negro */
+  border: 4px solid #000000; /* borde negro */
+  position: relative;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 2rem;
+  text-align: center;
+  padding: 1rem;
+  box-sizing: border-box;
+  text-shadow: none;
+  transition: background-color 0.5s, color 0.5s, border-color 0.5s;
+}
+
+.kanto-header::after {
+  content: '';
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  right: 3px;
+  bottom: 3px;
+  border: 2px solid #000000;
+  pointer-events: none;
+}
+
+
 .console-container.kanto {
   background-color: #d27d27;
   border: 3px solid #000;

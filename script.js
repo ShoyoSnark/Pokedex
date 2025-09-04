@@ -6,6 +6,8 @@ const pokemonList = document.getElementById("pokemon-list");
 const gameCover = document.getElementById("game-cover");
 const gameName = document.getElementById("game-name");
 const searchInput = document.getElementById("searchInput");
+const searchBtn = document.getElementById("searchBtn"); // <- AÑADIDO
+const selectionTitle = document.querySelector(".selection-body");
 
 const modal = document.getElementById("pokemon-modal");
 const closeModal = document.getElementById("closeModal");
@@ -17,18 +19,22 @@ const modalWeight = document.getElementById("modal-weight");
 const modalDescription = document.getElementById("modal-description");
 const modalSprite = document.getElementById("modal-sprite");
 
+const detailName = document.getElementById("detail-name");
+const detailSprite = document.getElementById("detail-sprite");
+const detailType = document.getElementById("detail-type");
+const detailDescription = document.getElementById("detail-description");
+
 const beepSound = document.getElementById("beep-sound");
-// Pre-cargar y reproducir en silencio al inicio para evitar retraso
-beepSound.volume = 0;
-beepSound.play().catch(() => {}); // ignora el error de autoplay
-beepSound.pause();
-beepSound.currentTime = 0;
 beepSound.volume = 0.1;
 
 const carouselWrapper = document.querySelector(".carousel-wrapper");
 const carouselContainer = document.querySelector(".carousel-container");
 const arrowUp = document.querySelector(".arrow-up");
 const arrowDown = document.querySelector(".arrow-down");
+const header = document.querySelector("header");
+
+let isRotating = false;
+let currentGame = null;
 
 // ----------------------------
 // Consolas y juegos
@@ -71,20 +77,20 @@ function generateGameMenu() {
   menuGbGames.innerHTML = "";
   carouselContainer.innerHTML = "";
 
-  consoles.forEach(console => {
+  consoles.forEach(consoleObj => {
     const gamesDiv = document.createElement("div");
-    gamesDiv.className = `games console-container ${console.cssClass}`;
+    gamesDiv.className = `games console-container ${consoleObj.cssClass}`;
 
     const consoleIcon = document.createElement("div");
     consoleIcon.className = "consoleIcon";
-    consoleIcon.innerHTML = `<h1>${console.name}</h1><img src="${console.img}" alt="Consola ${console.name}">`;
+    consoleIcon.innerHTML = `<h1>${consoleObj.name}</h1><img src="${consoleObj.img}" alt="Consola ${consoleObj.name}">`;
 
     const gameList = document.createElement("div");
     gameList.className = "gameList";
 
-    console.games.forEach(game => {
+    consoleObj.games.forEach(game => {
       const btn = document.createElement("button");
-      btn.onclick = () => loadPokedex(game);
+      btn.onclick = () => loadPokedex(game, consoleObj);
       btn.innerHTML = `<img src="${game.cover}" alt="${game.title}"><p>${game.title}</p>`;
       gameList.appendChild(btn);
     });
@@ -94,14 +100,13 @@ function generateGameMenu() {
     carouselContainer.appendChild(gamesDiv);
   });
 
-  // ----------------------------
   // Centrar GameBoy al inicio
   const items = Array.from(carouselContainer.children);
   const gameBoyIndex = items.findIndex(c => c.classList.contains("kanto"));
   const middleIndex = Math.floor(items.length / 2);
 
   if (gameBoyIndex !== middleIndex) {
-    const shiftCount = middleIndex - gameBoyIndex+1;
+    const shiftCount = middleIndex - gameBoyIndex + 1;
     if (shiftCount > 0) {
       for (let i = 0; i < shiftCount; i++) {
         const first = carouselContainer.firstChild;
@@ -121,6 +126,9 @@ function generateGameMenu() {
 // ----------------------------
 // Carousel tipo ruleta 3D
 function rotateCarousel(direction) {
+  if (isRotating) return;
+  isRotating = true;
+
   const items = Array.from(carouselContainer.children);
 
   if (direction === "up") {
@@ -132,13 +140,16 @@ function rotateCarousel(direction) {
   }
 
   requestAnimationFrame(() => updateSelected());
+
+  setTimeout(() => {
+    isRotating = false;
+  }, 500);
 }
 
 function updateSelected() {
   const items = Array.from(carouselContainer.children);
   items.forEach(item => {
     item.classList.remove("selected", "adjacent", "prev", "far");
-    // Bloquear botones de los no seleccionados
     const buttons = item.querySelectorAll("button");
     buttons.forEach(btn => btn.disabled = true);
   });
@@ -146,32 +157,217 @@ function updateSelected() {
   const middleIndex = Math.floor(items.length / 2);
   const selectedItem = items[middleIndex];
   selectedItem.classList.add("selected");
-
   const buttons = selectedItem.querySelectorAll("button");
   buttons.forEach(btn => btn.disabled = false);
 
   if (items[middleIndex - 1]) items[middleIndex - 1].classList.add("adjacent", "prev");
   if (items[middleIndex + 1]) items[middleIndex + 1].classList.add("adjacent");
-
   if (items[middleIndex - 2]) items[middleIndex - 2].classList.add("far", "prev");
   if (items[middleIndex + 2]) items[middleIndex + 2].classList.add("far");
 }
 
 // ----------------------------
+// Lista Pokémon (sin límite) + búsqueda robusta
+let allPokemons = [];
+
+// Normaliza texto para comparar (lowercase + trim)
+function normalizeQuery(q) {
+  return (q || "").toLowerCase().trim();
+}
+
+async function loadPokemonList(game) {
+  pokemonList.innerHTML = "<p>Cargando Pokémon...</p>";
+  try {
+    const response = await fetch(`https://pokeapi.co/api/v2/pokemon?offset=${game.offset}&limit=${game.limit}`);
+    const data = await response.json();
+    allPokemons = data.results;
+
+    // Render inicial (lista completa) y seleccionar el primero
+    const full = allPokemons.map((p, i) => ({ ...p, index: i }));
+    renderPokemonList(full, game, /* autoSelectFirst */ true);
+
+    // Eventos de búsqueda
+    // 1) Filtrado en vivo (NO selecciona nada aún)
+    searchInput.oninput = () => {
+      const q = normalizeQuery(searchInput.value);
+      renderForTyping(q, currentGame);
+    };
+
+    // 2) Click en botón Buscar
+    searchBtn.onclick = () => runSearch();
+
+    // 3) Enter en el input
+    searchInput.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        runSearch();
+      }
+      if (e.key === "Escape") {
+        // Reset rápido con ESC
+        searchInput.value = "";
+        renderForTyping("", currentGame);
+        // Mantener selección actual (no forzar cambio)
+      }
+    });
+
+  } catch (error) {
+    console.error(error);
+    pokemonList.innerHTML = "<p>Error cargando Pokémon.</p>";
+  }
+}
+
+/**
+ * Renderiza lista. 
+ * - pokemonArray: [{ name, url, index }]
+ * - autoSelectFirst: si true, hace click en el primer item (solo para carga inicial)
+ */
+function renderPokemonList(pokemonArray, game, autoSelectFirst = false) {
+  pokemonList.innerHTML = "";
+
+  pokemonArray.forEach((poke) => {
+    const pokemonId = poke.index + 1 + game.offset;
+    const pokemonName = capitalizeFirstLetter(poke.name);
+
+    const card = document.createElement("div");
+    card.className = "pokemon-slot";
+    card.dataset.name = poke.name.toLowerCase(); // para coincidencia exacta
+    card.innerHTML = `<strong>#${pokemonId.toString().padStart(3, "0")}</strong> <span>${pokemonName}</span>`;
+
+    card.addEventListener("click", async () => {
+      document.querySelectorAll(".pokemon-slot").forEach(el => el.classList.remove("selected-slot"));
+      card.classList.add("selected-slot");
+      try { beepSound.currentTime = 0; beepSound.play(); } catch {}
+      const pokeData = await fetch(poke.url).then(res => res.json());
+      showDetail(pokeData);
+    });
+
+    pokemonList.appendChild(card);
+  });
+
+  // Solo selecciona automático si es carga inicial
+  if (autoSelectFirst) {
+    const firstCard = pokemonList.querySelector(".pokemon-slot");
+    if (firstCard) firstCard.click();
+  }
+
+  // Asegura el scroll en top del contenedor de lista
+  const container = document.getElementById("pokemon-list-container");
+  if (container) container.scrollTop = 0;
+}
+
+/**
+ * Renderiza mientras escribes (solo filtra y renderiza, NO selecciona).
+ */
+function renderForTyping(query, game) {
+  if (!query) {
+    const full = allPokemons.map((p, i) => ({ ...p, index: i }));
+    // No auto-seleccionamos al escribir para no “saltar” selección
+    renderPokemonList(full, game, /* autoSelectFirst */ false);
+    return;
+  }
+
+  const filtered = allPokemons
+    .map((p, i) => ({ ...p, index: i }))
+    .filter(p => p.name.toLowerCase().includes(query));
+
+  if (filtered.length === 0) {
+    pokemonList.innerHTML = "<p>No se encontraron Pokémon.</p>";
+    return;
+  }
+
+  renderPokemonList(filtered, game, /* autoSelectFirst */ false);
+}
+
+/**
+ * Ejecuta la búsqueda (clic en botón o Enter):
+ * - Renderiza según la query
+ * - Selecciona exacto si existe; si no, primero del resultado.
+ */
+function runSearch() {
+  const query = normalizeQuery(searchInput.value);
+
+  // Construye el listado según la query (reutiliza la misma lógica)
+  if (!query) {
+    const full = allPokemons.map((p, i) => ({ ...p, index: i }));
+    renderPokemonList(full, currentGame, /* autoSelectFirst */ true);
+    return;
+  }
+
+  const filtered = allPokemons
+    .map((p, i) => ({ ...p, index: i }))
+    .filter(p => p.name.toLowerCase().includes(query));
+
+  if (filtered.length === 0) {
+    pokemonList.innerHTML = "<p>No se encontraron Pokémon.</p>";
+    detailName.textContent = "";
+    detailSprite.src = "";
+    detailType.textContent = "";
+    detailDescription.textContent = "";
+    return;
+  }
+
+  // Render SIN auto select
+  renderPokemonList(filtered, currentGame, false);
+
+  // 1) Intentar coincidencia exacta
+  const exactCard = pokemonList.querySelector(`.pokemon-slot[data-name="${query}"]`);
+  if (exactCard) {
+    exactCard.click();
+    exactCard.scrollIntoView({ block: "nearest" });
+  } else {
+    // 2) Si no hay exacta, seleccionar primero del resultado
+    const firstCard = pokemonList.querySelector(".pokemon-slot");
+    if (firstCard) {
+      firstCard.click();
+      firstCard.scrollIntoView({ block: "nearest" });
+    }
+  }
+}
+
+// ----------------------------
+// Mostrar detalle en contenedor lateral
+async function showDetail(pokemon) {
+  detailName.textContent = `#${pokemon.id} ${capitalizeFirstLetter(pokemon.name)}`;
+  detailSprite.src = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${pokemon.id}.png`;
+  detailType.textContent = "Tipo: " + pokemon.types.map(t => translateType(t.type.name)).join(" / ");
+
+  const species = await fetch(pokemon.species.url).then(res => res.json());
+  const descriptionES = species.flavor_text_entries.find(e => e.language.name === "es");
+  detailDescription.textContent = descriptionES ? descriptionES.flavor_text.replace(/\n|\f/g,' ') : "Descripción no disponible";
+}
+
+// ----------------------------
 // Cargar Pokédex
-async function loadPokedex(game) {
+async function loadPokedex(game, consoleObj) {
   menuGbGames.style.display = "none";
   pokedex.style.display = "block";
   carouselWrapper.style.display = "none";
   arrowUp.style.display = "none";
   arrowDown.style.display = "none";
 
+  // Mostrar el input de búsqueda al abrir Pokédex
+  searchInput.style.display = "block";
+  searchInput.value = "";
+  searchInput.placeholder = "Buscar Pokémon...";
+
+  // Header
+  header.classList.remove("kanto-header","johto-header","hoenn-header","default-header");
+  if (consoleObj.cssClass === "kanto") header.classList.add("kanto-header");
+  else if (consoleObj.cssClass === "johto") header.classList.add("johto-header");
+  else if (consoleObj.cssClass === "hoenn") header.classList.add("hoenn-header");
+  else header.classList.add("default-header");
+
+  selectionTitle.textContent = "Selecciona un Pokémon";
   pokedex.style.borderColor = game.borderColor;
   gameCover.src = game.cover;
   gameCover.alt = game.title;
   gameName.textContent = game.title;
 
+  currentGame = game;
   await loadPokemonList(game);
+
+  // Foco directo al input para poder escribir de inmediato
+  setTimeout(() => searchInput.focus(), 0);
 }
 
 // ----------------------------
@@ -184,86 +380,21 @@ function goBack() {
   arrowDown.style.display = "block";
   updateSelected();
   pokemonList.innerHTML = "";
+  detailName.textContent = "";
+  detailSprite.src = "";
+  detailType.textContent = "";
+  detailDescription.textContent = "";
+
+  // Ocultar input al volver al menú
+  searchInput.style.display = "none";
+  searchInput.value = "";
+
+  header.classList.remove("kanto-header","johto-header","hoenn-header");
+  header.classList.add("default-header");
+  selectionTitle.textContent = "Selecciona tu juego";
 }
 
 document.getElementById("backBtn").onclick = goBack;
-
-// ----------------------------
-// Modal
-closeModal.onclick = () => modal.style.display = "none";
-window.onclick = (event) => { if (event.target === modal) modal.style.display = "none"; };
-
-// ----------------------------
-// Lista Pokémon
-async function loadPokemonList(game) {
-  pokemonList.innerHTML = "<p>Cargando Pokémon...</p>";
-  try {
-    const response = await fetch(`https://pokeapi.co/api/v2/pokemon?offset=${game.offset}&limit=${game.limit}`);
-    const data = await response.json();
-    pokemonList.innerHTML = "";
-
-    data.results.forEach((poke, index) => {
-      const pokemonId = game.offset + index + 1;
-      const pokemonName = capitalizeFirstLetter(poke.name);
-
-      const card = document.createElement("div");
-      card.className = "pokemon-card";
-      card.innerHTML = `<img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${pokemonId}.png" alt="${pokemonName}"><p>#${pokemonId}<br>${pokemonName}</p>`;
-      card.addEventListener("click", async () => {
-        beepSound.currentTime = 0;
-        beepSound.play();
-        const pokeData = await fetch(poke.url).then(res => res.json());
-        showModal(pokeData);
-      });
-      pokemonList.appendChild(card);
-    });
-
-    searchInput.oninput = () => filterPokemon(data.results, game);
-  } catch (error) {
-    console.error(error);
-    pokemonList.innerHTML = "<p>Error cargando Pokémon.</p>";
-  }
-}
-
-// ----------------------------
-// Filtrar Pokémon
-function filterPokemon(pokemons, game) {
-  const query = searchInput.value.toLowerCase();
-  pokemonList.innerHTML = "";
-  pokemons.forEach((poke, index) => {
-    if (!poke.name.includes(query)) return;
-    const pokemonId = game.offset + index + 1;
-    const pokemonName = capitalizeFirstLetter(poke.name);
-
-    const card = document.createElement("div");
-    card.className = "pokemon-card";
-    card.innerHTML = `<img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${pokemonId}.png" alt="${pokemonName}"><p>#${pokemonId}<br>${pokemonName}</p>`;
-    card.addEventListener("click", async () => {
-      beepSound.currentTime = 0;
-      beepSound.play();
-      const pokeData = await fetch(poke.url).then(res => res.json());
-      showModal(pokeData);
-    });
-    pokemonList.appendChild(card);
-  });
-}
-
-// ----------------------------
-// Modal
-async function showModal(pokemon) {
-  modalName.textContent = `#${pokemon.id} ${capitalizeFirstLetter(pokemon.name)}`;
-  modalNumber.textContent = `Nº: ${pokemon.id}`;
-  modalSprite.src = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${pokemon.id}.png`;
-  modalType.textContent = "Tipo: " + pokemon.types.map(t => translateType(t.type.name)).join(" / ");
-  modalHeight.textContent = `Altura: ${(pokemon.height / 10).toFixed(1)}m`;
-  modalWeight.textContent = `Peso: ${(pokemon.weight / 10).toFixed(1)}kg`;
-
-  const species = await fetch(pokemon.species.url).then(res => res.json());
-  const descriptionES = species.flavor_text_entries.find(e => e.language.name === "es");
-  modalDescription.textContent = descriptionES ? `Descripción: ${descriptionES.flavor_text.replace(/\n|\f/g,' ')}` : "Descripción no disponible";
-
-  modal.style.display = "flex";
-}
 
 // ----------------------------
 // Auxiliares
@@ -283,7 +414,5 @@ function translateType(type) {
 // ----------------------------
 // Inicializar
 generateGameMenu();
-
-// Flechas click
 arrowUp.addEventListener("click", () => rotateCarousel("up"));
 arrowDown.addEventListener("click", () => rotateCarousel("down"));
