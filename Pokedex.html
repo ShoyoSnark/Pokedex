@@ -9,10 +9,9 @@
   <link rel="stylesheet" href="style-hoenn.css">
   <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
 </head>
-<body>
-  <!-- Encabezado -->
-  <header class="default-header">Pokédex</header>
-
+<!-- Encabezado -->
+<header class="default-header">Pokédex</header>
+<body class="default-body">
   <!-- Título principal -->
   <h1 class="selection-body">Selecciona tu juego</h1>
 
@@ -50,16 +49,16 @@
         <p id="detail-description"></p>
       </div>
   </div>
+  <!-- Botones inferiores -->
+  <div id="pokedex-footer">
+    <button id="backBtn" onclick="goBack()">⬅ Volver</button>
+      <!-- Input de búsqueda oculto -->
+    <input type="text" id="searchInput" placeholder="Buscar Pokémon..." style="display:none;">
 
-    <!-- Botones inferiores -->
-    <div id="pokedex-footer">
-      <button id="backBtn" onclick="goBack()">⬅ Volver</button>
-        <!-- Input de búsqueda oculto -->
-      <input type="text" id="searchInput" placeholder="Buscar Pokémon..." style="display:none;">
-
-      <button id="searchBtn">🔍 Buscar</button>
-    </div>
+    <button id="searchBtn">🔍 Buscar</button>
   </div>
+</div>
+
 
 
   <audio id="beep-sound" src="./sounds/pokemonAButton.mp3"></audio>

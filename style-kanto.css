@@ -1,17 +1,28 @@
+/* ----------------------------
+   Fuente estilo Pokémon Amarillo
+---------------------------- */
+@font-face {
+  font-family: 'PokemonGB';
+  src: url('./fuentes/PokemonGb.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
 /* Kanto */
 
 /* Header estilo Pokémon Amarillo */
 .kanto-header {
   background-color: #ffffff; /* fondo blanco */
+  background-image: none;
   color: #000000;           /* texto negro */
   border: 4px solid #000000; /* borde negro */
-  position: relative;
   font-family: 'Press Start 2P', monospace;
   font-size: 2rem;
   text-align: center;
   padding: 1rem;
   box-sizing: border-box;
   text-shadow: none;
+  z-index: 2;
   transition: background-color 0.5s, color 0.5s, border-color 0.5s;
 }
 
@@ -25,10 +36,51 @@
   border: 2px solid #000000;
   pointer-events: none;
 }
+/* Body estilo Pokémon Amarillo */
+body.kanto-body {
+  color: #000;
+  background: #ffffff;
+  background-image: url("./images/fondo/kanto.png");
+  background-position: center;
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+  background-size: cover;
+  font-family: 'Press Start 2P', monospace;
+  position: relative;
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
 
+/* Marco externo */
+body.kanto-body::before {
+  content: "";
+  position: fixed;
+  top: 10px;
+  left: 10px;
+  right: 10px;
+  bottom: 10px;
+  border: 4px solid #000;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Marco interno (doble borde) */
+body.kanto-body::after {
+  content: "";
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  right: 20px;
+  bottom: 20px;
+  border: 2px solid #000;
+  pointer-events: none;
+  z-index: 1;
+}
 
 .console-container.kanto {
-  background-color: #d27d27;
+  background-color: #ffffff;
   border: 3px solid #000;
   border-radius: 10px;
   background-image: url("../images/region/kanto.jpg");
@@ -41,7 +93,7 @@
 /* Botones de juego Kanto */
 .console-container.kanto .gameList button {
   background: #f0e0c0;
-  border: 3px solid #0f380f;
+  border: 3px solid #000000;
   border-radius: 10px;
   padding: 0.2rem;
   cursor: pointer;
@@ -53,7 +105,7 @@
 .console-container.kanto .gameList button:hover {
   transform: scale(1.05);
   background: #e0d890;
-  box-shadow: 0 0 8px #0f380f;
+  box-shadow: 0 0 8px #000000;
 }
 
 /* Consola seleccionada */
@@ -62,3 +114,229 @@
   transform: scale(1.02);
   transition: transform 0.3s, box-shadow 0.3s;
 }
+
+/* ---------------------------- */
+/* Pokédex Kanto */
+
+/* Contenedor principal de la Pokédex */
+
+/* Fondo tipo scanline retro dentro de la Pokédex */
+.kanto-pokedex::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: repeating-linear-gradient(
+    to bottom,
+    rgba(0,0,0,0.03),
+    rgba(0,0,0,0.03) 1px,
+    transparent 1px,
+    transparent 2px
+  );
+  pointer-events: none;
+  z-index: 0;
+}
+/* Aplica la fuente a la Pokédex y detalles */
+.kanto-pokedex {
+  display: none;
+  flex-direction: column;
+  width: 90%;
+  max-width: 900px;
+  margin: 20px auto;
+  border: 5px solid #000000;
+  border-radius: 10px;
+  background: #ffffff;
+  box-sizing: border-box;
+  height: auto; /* se ajusta según contenido */
+  box-shadow: inset 0 0 15px rgba(0,0,0,0.2), 0 0 8px rgba(0,0,0,0.2);
+  position: relative; /* necesario para ::before */
+}
+
+/* Header de la Pokédex */
+.kanto-pokedex #pokedex-header {
+  font-family: 'PokemonGB', monospace;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 10px;
+  border-bottom: 3px solid #000000;
+  filter: grayscale(100%);
+}
+
+/* Contenedor principal de lista + detalles */
+.kanto-pokedex #pokedex-content {
+  font-family: 'PokemonGB', monospace;
+  display: flex;
+  gap: 20px;
+  padding: 10px;
+  height: 400px;      /* altura por defecto */
+  box-sizing: border-box;
+  overflow: hidden;    /* solo el scroll de la lista funcionará */
+}
+
+/* Contenedor de la lista de Pokémon */
+.kanto-pokedex #pokemon-list-container {
+  flex: 0.5;
+  border: 2px solid #000000;
+  height: 100%;
+  overflow-y: auto;
+  position: relative;
+  background: #ffffff;
+  padding: 5px;
+}
+
+/* Scroll retro */
+.kanto-pokedex #pokemon-list-container::-webkit-scrollbar {
+  width: 20px;
+}
+.kanto-pokedex #pokemon-list-container::-webkit-scrollbar-track {
+  background: #ffffff;
+  border-left: 4px solid #000000;
+}
+.kanto-pokedex #pokemon-list-container::-webkit-scrollbar-thumb {
+  background: #ffffff;
+  border: 2px solid #000000;
+  border-radius: 0;
+}
+.kanto-pokedex #pokemon-list-container::-webkit-scrollbar-thumb:hover {
+  background: #000000;
+  border-color: #000000;
+}
+
+/* Sprite del Pokémon en detalle */
+.kanto-pokedex #detail-sprite {
+  width: 150px;
+  height: 150px;
+  image-rendering: pixelated;
+  filter: grayscale(100%) contrast(120%) brightness(90%);
+  border: 2px solid #000; /* opcional, marco retro */
+}
+
+/* Footer con botones */
+.kanto-pokedex #pokedex-footer {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+}
+/* Fuente Footer*/
+.kanto-pokedex #pokedex-footer button,input {
+  font-family: 'PokemonGB', monospace;
+  filter: grayscale(100%);
+}
+
+.kanto-pokedex #pokedex-footer button {
+  background: #ffffff;
+  border: 3px solid #000;
+  border-radius: 6px;
+  padding: 8px 20px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: transform 0.2s, background 0.2s;
+  box-shadow: -2px -2px 0 #555 inset, -2px -2px 0 #fff inset;
+}
+
+.kanto-pokedex #pokedex-footer button:hover {
+  transform: scale(1.05);
+  background: #ffffff;
+}
+
+/* Carátula del juego */
+.kanto-pokedex #game-cover {
+  width: 140px;
+  height: 140px;
+  object-fit: cover;
+  border: 2px solid #000;
+  box-shadow: inset 1px 1px 0 #fff, inset -1px -1px 0 #999;
+  border-radius: 4px;
+}
+
+/* Input de búsqueda */
+.kanto-pokedex #searchInput {
+  flex: 1;
+  max-width: 250px;
+  padding: 6px 10px;
+  font-size: 10px;
+  color: #000000;
+  background: #ffffff;
+  border: 3px solid #444;
+  border-radius: 6px;
+  outline: none;
+}
+
+.kanto-pokedex #searchInput:focus {
+  border-color: #000000;
+  box-shadow: 0 0 5px #ff0000 inset;
+}
+
+/* Botón de búsqueda */
+.kanto-pokedex #searchBtn {
+  font-size: 10px;
+  padding: 6px 12px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  color: #000000;
+  box-shadow: 2px 2px 0 #414040;
+  transition: transform 0.1s, box-shadow 0.1s;
+}
+
+.kanto-pokedex #searchBtn:active {
+  transform: translate(2px, 2px);
+  box-shadow: none;
+}
+
+/* Lista de Pokémon */
+.kanto-pokedex #pokemon-list {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  width: 100%;
+  height: auto; /* ❌ elimina la altura fija */
+  box-sizing: border-box;
+}
+
+/* Panel de detalles */
+.kanto-pokedex #pokemon-details {
+  flex: 1;
+  border: 2px solid #000000;
+  padding: 10px;
+  text-align: center;
+  overflow-y: visible; /* ❌ elimina scroll en detalles */
+}
+
+/* Cada Pokémon */
+.kanto-pokedex .pokemon-slot {
+  display: flex;
+  align-items: center;
+  padding: 6px 10px;
+  background: #d1d1d1;
+  border: 2px solid #808080;
+  font-size: 10px;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s;
+  box-shadow: inset 1px 1px 0 #fff, inset -1px -1px 0 #999;
+}
+
+.kanto-pokedex .pokemon-slot:hover {
+  background: #eeeeee;
+  border-color: #000000; /* rojo Pokémon clásico */
+  box-shadow: 0 0 5px rgba(0,0,0,0.5);
+}
+
+.kanto-pokedex .pokemon-slot.selected-slot {
+  border: 2px solid rgb(0, 0, 0);
+  background: #ffffff;
+}
+
+.kanto-pokedex .pokemon-slot strong {
+  min-width: 50px;
+}
+
+.kanto-pokedex .pokemon-slot span {
+  margin-left: 10px;
+}
+
+
+/* Final de Diseño Pokédex */
+/* ---------------------------- */

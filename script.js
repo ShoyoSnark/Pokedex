@@ -9,16 +9,6 @@ const searchInput = document.getElementById("searchInput");
 const searchBtn = document.getElementById("searchBtn"); // <- AÑADIDO
 const selectionTitle = document.querySelector(".selection-body");
 
-const modal = document.getElementById("pokemon-modal");
-const closeModal = document.getElementById("closeModal");
-const modalName = document.getElementById("modal-name");
-const modalNumber = document.getElementById("modal-number");
-const modalType = document.getElementById("modal-type");
-const modalHeight = document.getElementById("modal-height");
-const modalWeight = document.getElementById("modal-weight");
-const modalDescription = document.getElementById("modal-description");
-const modalSprite = document.getElementById("modal-sprite");
-
 const detailName = document.getElementById("detail-name");
 const detailSprite = document.getElementById("detail-sprite");
 const detailType = document.getElementById("detail-type");
@@ -32,9 +22,12 @@ const carouselContainer = document.querySelector(".carousel-container");
 const arrowUp = document.querySelector(".arrow-up");
 const arrowDown = document.querySelector(".arrow-down");
 const header = document.querySelector("header");
+const body = document.querySelector("body");
 
 let isRotating = false;
 let currentGame = null;
+
+
 
 // ----------------------------
 // Consolas y juegos
@@ -44,9 +37,9 @@ const consoles = [
     img: "./images/consolas/gameBoy.png",
     cssClass: "kanto",
     games: [
-      { id: "red", title: "Pokémon Rojo", cover: "./images/caratulas/caratulaPokemonRojo.jpg", borderColor: "red", offset: 0, limit: 151 },
-      { id: "blue", title: "Pokémon Azul", cover: "./images/caratulas/caratulaPokemonAzul.jpg", borderColor: "blue", offset: 0, limit: 151 },
-      { id: "yellow", title: "Pokémon Amarillo", cover: "./images/caratulas/caratulaPokemonAmarillo.jpg", borderColor: "gold", offset: 0, limit: 151 }
+      { id: "red", title: "Pokémon Rojo", cover: "./images/caratulas/caratulaPokemonRojo.jpg", offset: 0, limit: 151 },
+      { id: "blue", title: "Pokémon Azul", cover: "./images/caratulas/caratulaPokemonAzul.jpg", offset: 0, limit: 151 },
+      { id: "yellow", title: "Pokémon Amarillo", cover: "./images/caratulas/caratulaPokemonAmarillo.jpg",  offset: 0, limit: 151 }
     ]
   },
   {
@@ -54,9 +47,9 @@ const consoles = [
     img: "./images/consolas/gameBoyColor.png",
     cssClass: "johto",
     games: [
-      { id: "gold", title: "Pokémon Oro", cover: "./images/caratulas/caratulaPokemonOro.jpg", borderColor: "gold", offset: 151, limit: 100 },
-      { id: "silver", title: "Pokémon Plata", cover: "./images/caratulas/caratulaPokemonPlata.jpg", borderColor: "#c0c0c0", offset: 151, limit: 100 },
-      { id: "crystal", title: "Pokémon Cristal", cover: "./images/caratulas/caratulaPokemonCristal.jpg", borderColor: "#a7d8de", offset: 151, limit: 100 }
+      { id: "gold", title: "Pokémon Oro", cover: "./images/caratulas/caratulaPokemonOro.jpg", offset: 151, limit: 100 },
+      { id: "silver", title: "Pokémon Plata", cover: "./images/caratulas/caratulaPokemonPlata.jpg", offset: 151, limit: 100 },
+      { id: "crystal", title: "Pokémon Cristal", cover: "./images/caratulas/caratulaPokemonCristal.jpg", offset: 151, limit: 100 }
     ]
   },
   {
@@ -64,12 +57,20 @@ const consoles = [
     img: "./images/consolas/gameBoyAdvance.png",
     cssClass: "hoenn",
     games: [
-      { id: "ruby", title: "Pokémon Rubí", cover: "./images/caratulas/caratulaPokemonRubi.jpg", borderColor: "#d32f2f", offset: 251, limit: 135 },
-      { id: "sapphire", title: "Pokémon Zafiro", cover: "./images/caratulas/caratulaPokemonZafiro.jpg", borderColor: "#1976d2", offset: 251, limit: 135 },
-      { id: "emerald", title: "Pokémon Esmeralda", cover: "./images/caratulas/caratulaPokemonEsmeralda.jpg", borderColor: "#43a047", offset: 251, limit: 135 }
+      { id: "ruby", title: "Pokémon Rubí", cover: "./images/caratulas/caratulaPokemonRubi.jpg", offset: 251, limit: 135 },
+      { id: "sapphire", title: "Pokémon Zafiro", cover: "./images/caratulas/caratulaPokemonZafiro.jpg", offset: 251, limit: 135 },
+      { id: "emerald", title: "Pokémon Esmeralda", cover: "./images/caratulas/caratulaPokemonEsmeralda.jpg", offset: 251, limit: 135 }
     ]
   }
 ];
+
+function setRegion(element, region, type) {
+  element.classList.remove("kanto-"+type,"johto-"+type,"hoenn-"+type,"default-"+type);
+  if (region === "kanto") element.classList.add("kanto-"+type);
+  else if (region === "johto") element.classList.add("johto-"+type);
+  else if (region === "hoenn") element.classList.add("hoenn-"+type);
+  else element.classList.add("default-"+type);
+}
 
 // ----------------------------
 // Generar menú dinámico
@@ -349,16 +350,15 @@ async function loadPokedex(game, consoleObj) {
   searchInput.style.display = "block";
   searchInput.value = "";
   searchInput.placeholder = "Buscar Pokémon...";
-
-  // Header
-  header.classList.remove("kanto-header","johto-header","hoenn-header","default-header");
-  if (consoleObj.cssClass === "kanto") header.classList.add("kanto-header");
-  else if (consoleObj.cssClass === "johto") header.classList.add("johto-header");
-  else if (consoleObj.cssClass === "hoenn") header.classList.add("hoenn-header");
-  else header.classList.add("default-header");
-
+  //------------------Estilos de Pagina--------------------
+  //Cargar estilo de header segun region
+  setRegion(header, consoleObj.cssClass, "header");
+  //Cargar estilo de body segun region
+  setRegion(body, consoleObj.cssClass, "body");
+  //Cargar estilo de pokedex segun region
+  setRegion(pokedex, consoleObj.cssClass, "pokedex");
+  
   selectionTitle.textContent = "Selecciona un Pokémon";
-  pokedex.style.borderColor = game.borderColor;
   gameCover.src = game.cover;
   gameCover.alt = game.title;
   gameName.textContent = game.title;
@@ -391,6 +391,8 @@ function goBack() {
 
   header.classList.remove("kanto-header","johto-header","hoenn-header");
   header.classList.add("default-header");
+  body.classList.remove("kanto-body","johto-body","hoenn-body");
+  body.classList.add("default-body");
   selectionTitle.textContent = "Selecciona tu juego";
 }
 
