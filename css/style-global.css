@@ -17,7 +17,7 @@ body {
 }
 
 body.default-body {
-  background-image: url("./images/fondo/pokedex-pokeball.png");
+  background-image: url("../images/fondo/pokedex-pokeball.png");
   background-position: center;
   background-attachment: fixed;
   background-repeat: no-repeat;
@@ -56,7 +56,7 @@ header {
 }
 
 header.default-header {
-  background-image: url("./images/fondo/header.png");
+  background-image: url("../images/fondo/header.png");
   background-position: center;
   background-size: 28%;
   background-color: #172b12;
@@ -267,42 +267,5 @@ header.default-header {
 @media (max-width: 600px) {
   .selection-body {
     font-size: 18px;
-  }
-}
-
-/* Pokedex Responsiva */
-/* Tablets y pantallas medianas */
-@media (max-width: 1000px) {
-  #pokedex-content {
-    flex-direction: column;
-    height: auto; /* ajusta altura según contenido */
-  }
-  #pokemon-list-container {
-    height: 400px; /* altura menor para tablet */
-  }
-  #pokemon-list {
-    height: calc((50px + 5px) * 10);
-  }
-}
-
-/* Móviles */
-@media (max-width: 600px) {
-  #pokedex {
-    width: 95%;
-  }
-  #pokedex-content {
-    flex-direction: column;
-    gap: 10px;
-    padding: 5px;
-    height: auto;
-  }
-  #pokemon-list-container {
-    height: 300px; /* altura menor para móvil */
-  }
-  #pokemon-list {
-    height: calc((40px + 5px) * 10); /* filas más pequeñas */
-  }
-  #pokemon-details {
-    padding: 5px;
   }
 }

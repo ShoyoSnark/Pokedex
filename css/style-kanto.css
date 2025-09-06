@@ -3,14 +3,14 @@
 ---------------------------- */
 @font-face {
   font-family: 'PokemonGB';
-  src: url('./fuentes/PokemonGb.ttf') format('truetype');
+  src: url('../fuentes/PokemonGb.ttf') format('truetype');
   font-weight: normal;
   font-style: normal;
 }
 
-/* Kanto */
-
-/* Header estilo Pokémon Amarillo */
+/* ----------------------------
+   Header estilo Pokémon Amarillo
+---------------------------- */
 .kanto-header {
   background-color: #ffffff; /* fondo blanco */
   background-image: none;
@@ -22,35 +22,34 @@
   padding: 1rem;
   box-sizing: border-box;
   text-shadow: none;
-  z-index: 2;
+
   transition: background-color 0.5s, color 0.5s, border-color 0.5s;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;     /* que ocupe todo el ancho */
+  z-index: 10;     /* encima de todo el contenido */
 }
 
 .kanto-header::after {
-  content: '';
   position: absolute;
-  top: 3px;
-  left: 3px;
-  right: 3px;
-  bottom: 3px;
   border: 2px solid #000000;
   pointer-events: none;
 }
-/* Body estilo Pokémon Amarillo */
+
+/* ----------------------------
+   Body estilo Pokémon Amarillo
+---------------------------- */
 body.kanto-body {
   color: #000;
   background: #ffffff;
-  background-image: url("./images/fondo/kanto.png");
-  background-position: center;
-  background-attachment: fixed;
-  background-repeat: no-repeat;
-  background-size: cover;
   font-family: 'Press Start 2P', monospace;
   position: relative;
   min-height: 100vh;
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  padding-top: 80px; /* deja espacio para el header fijo */
 }
 
 /* Marco externo */
@@ -63,7 +62,7 @@ body.kanto-body::before {
   bottom: 10px;
   border: 4px solid #000;
   pointer-events: none;
-  z-index: 1;
+  z-index: 0;
 }
 
 /* Marco interno (doble borde) */
@@ -73,12 +72,15 @@ body.kanto-body::after {
   top: 20px;
   left: 20px;
   right: 20px;
-  bottom: 20px;
+
   border: 2px solid #000;
   pointer-events: none;
-  z-index: 1;
+  z-index: 0;
 }
 
+/* ----------------------------
+   Consola y botones de juego
+---------------------------- */
 .console-container.kanto {
   background-color: #ffffff;
   border: 3px solid #000;
@@ -90,7 +92,7 @@ body.kanto-body::after {
   box-sizing: border-box;
 }
 
-/* Botones de juego Kanto */
+/* Botones de juego */
 .console-container.kanto .gameList button {
   background: #f0e0c0;
   border: 3px solid #000000;
@@ -115,12 +117,11 @@ body.kanto-body::after {
   transition: transform 0.3s, box-shadow 0.3s;
 }
 
-/* ---------------------------- */
-/* Pokédex Kanto */
+/* ----------------------------
+   Pokédex Kanto
+---------------------------- */
 
-/* Contenedor principal de la Pokédex */
-
-/* Fondo tipo scanline retro dentro de la Pokédex */
+/* Fondo tipo scanline retro */
 .kanto-pokedex::before {
   content: "";
   position: absolute;
@@ -135,7 +136,7 @@ body.kanto-body::after {
   pointer-events: none;
   z-index: 0;
 }
-/* Aplica la fuente a la Pokédex y detalles */
+
 .kanto-pokedex {
   display: none;
   flex-direction: column;
@@ -146,14 +147,14 @@ body.kanto-body::after {
   border-radius: 10px;
   background: #ffffff;
   box-sizing: border-box;
-  height: auto; /* se ajusta según contenido */
+  height: auto;
   box-shadow: inset 0 0 15px rgba(0,0,0,0.2), 0 0 8px rgba(0,0,0,0.2);
-  position: relative; /* necesario para ::before */
+  position: relative;
+  font-family: 'PokemonGB', monospace;
 }
 
 /* Header de la Pokédex */
 .kanto-pokedex #pokedex-header {
-  font-family: 'PokemonGB', monospace;
   display: flex;
   align-items: center;
   gap: 15px;
@@ -162,18 +163,17 @@ body.kanto-body::after {
   filter: grayscale(100%);
 }
 
-/* Contenedor principal de lista + detalles */
+/* Contenedor principal */
 .kanto-pokedex #pokedex-content {
-  font-family: 'PokemonGB', monospace;
   display: flex;
   gap: 20px;
   padding: 10px;
-  height: 400px;      /* altura por defecto */
+  height: 400px;
   box-sizing: border-box;
-  overflow: hidden;    /* solo el scroll de la lista funcionará */
+  overflow: hidden;
 }
 
-/* Contenedor de la lista de Pokémon */
+/* Lista Pokémon */
 .kanto-pokedex #pokemon-list-container {
   flex: 0.5;
   border: 2px solid #000000;
@@ -195,23 +195,22 @@ body.kanto-body::after {
 .kanto-pokedex #pokemon-list-container::-webkit-scrollbar-thumb {
   background: #ffffff;
   border: 2px solid #000000;
-  border-radius: 0;
 }
 .kanto-pokedex #pokemon-list-container::-webkit-scrollbar-thumb:hover {
   background: #000000;
   border-color: #000000;
 }
 
-/* Sprite del Pokémon en detalle */
+/* Sprite detalle */
 .kanto-pokedex #detail-sprite {
   width: 150px;
   height: 150px;
   image-rendering: pixelated;
   filter: grayscale(100%) contrast(120%) brightness(90%);
-  border: 2px solid #000; /* opcional, marco retro */
+  border: 2px solid #000;
 }
 
-/* Footer con botones */
+/* Footer Pokédex */
 .kanto-pokedex #pokedex-footer {
   display: flex;
   gap: 10px;
@@ -219,18 +218,19 @@ body.kanto-body::after {
   justify-content: center;
   padding: 10px;
 }
-/* Fuente Footer*/
+
 .kanto-pokedex #pokedex-footer button,input {
   font-family: 'PokemonGB', monospace;
   filter: grayscale(100%);
 }
 
+/* Botones footer */
 .kanto-pokedex #pokedex-footer button {
   background: #ffffff;
   border: 3px solid #000;
   border-radius: 6px;
   padding: 8px 20px;
-  font-size: 12px;
+  font-size: clamp(10px, 2vw, 14px);
   cursor: pointer;
   transition: transform 0.2s, background 0.2s;
   box-shadow: -2px -2px 0 #555 inset, -2px -2px 0 #fff inset;
@@ -238,7 +238,6 @@ body.kanto-body::after {
 
 .kanto-pokedex #pokedex-footer button:hover {
   transform: scale(1.05);
-  background: #ffffff;
 }
 
 /* Carátula del juego */
@@ -249,14 +248,15 @@ body.kanto-body::after {
   border: 2px solid #000;
   box-shadow: inset 1px 1px 0 #fff, inset -1px -1px 0 #999;
   border-radius: 4px;
+  image-rendering: pixelated;
 }
 
-/* Input de búsqueda */
+/* Input búsqueda */
 .kanto-pokedex #searchInput {
   flex: 1;
   max-width: 250px;
   padding: 6px 10px;
-  font-size: 10px;
+  font-size: clamp(8px, 1.5vw, 12px);
   color: #000000;
   background: #ffffff;
   border: 3px solid #444;
@@ -269,50 +269,33 @@ body.kanto-body::after {
   box-shadow: 0 0 5px #ff0000 inset;
 }
 
-/* Botón de búsqueda */
-.kanto-pokedex #searchBtn {
-  font-size: 10px;
-  padding: 6px 12px;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  color: #000000;
-  box-shadow: 2px 2px 0 #414040;
-  transition: transform 0.1s, box-shadow 0.1s;
-}
-
-.kanto-pokedex #searchBtn:active {
-  transform: translate(2px, 2px);
-  box-shadow: none;
-}
-
-/* Lista de Pokémon */
+/* Lista Pokémon */
 .kanto-pokedex #pokemon-list {
   display: flex;
   flex-direction: column;
   gap: 5px;
   width: 100%;
-  height: auto; /* ❌ elimina la altura fija */
+  height: auto;
   box-sizing: border-box;
 }
 
-/* Panel de detalles */
+/* Panel detalles */
 .kanto-pokedex #pokemon-details {
   flex: 1;
   border: 2px solid #000000;
   padding: 10px;
   text-align: center;
-  overflow-y: visible; /* ❌ elimina scroll en detalles */
+  overflow-y: visible;
 }
 
-/* Cada Pokémon */
+/* Slots Pokémon */
 .kanto-pokedex .pokemon-slot {
   display: flex;
   align-items: center;
   padding: 6px 10px;
   background: #d1d1d1;
   border: 2px solid #808080;
-  font-size: 10px;
+  font-size: clamp(8px, 1.5vw, 12px);
   cursor: pointer;
   transition: background 0.2s, border-color 0.2s;
   box-shadow: inset 1px 1px 0 #fff, inset -1px -1px 0 #999;
@@ -320,12 +303,12 @@ body.kanto-body::after {
 
 .kanto-pokedex .pokemon-slot:hover {
   background: #eeeeee;
-  border-color: #000000; /* rojo Pokémon clásico */
+  border-color: #000000;
   box-shadow: 0 0 5px rgba(0,0,0,0.5);
 }
 
 .kanto-pokedex .pokemon-slot.selected-slot {
-  border: 2px solid rgb(0, 0, 0);
+  border: 2px solid #000;
   background: #ffffff;
 }
 
@@ -337,6 +320,16 @@ body.kanto-body::after {
   margin-left: 10px;
 }
 
-
-/* Final de Diseño Pokédex */
-/* ---------------------------- */
+/* ----------------------------
+   Responsividad
+---------------------------- */
+@media (max-width: 768px) {
+  .kanto-pokedex #pokedex-content {
+    flex-direction: column;
+    height: auto;
+  }
+  .kanto-pokedex #pokemon-list-container {
+    flex: none;
+    max-height: 200px;
+  }
+}

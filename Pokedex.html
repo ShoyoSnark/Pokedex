@@ -3,65 +3,75 @@
 <head>
   <meta charset="UTF-8">
   <title>Pokédex</title>
-  <link rel="stylesheet" href="style-global.css">
-  <link rel="stylesheet" href="style-kanto.css" id="region-style">
-  <link rel="stylesheet" href="style-johto.css">
-  <link rel="stylesheet" href="style-hoenn.css">
+
+  <!-- Estilos globales y por región -->
+  <link rel="stylesheet" href="./css/style-global.css"> <!-- Estilos comunes a todas las regiones -->
+  <link rel="stylesheet" href="./css/style-kanto.css" id="region-style"> <!-- Estilos para región Kanto -->
+  <link rel="stylesheet" href="./css/style-johto.css"> <!-- Estilos para región Johto -->
+  <link rel="stylesheet" href="./css/style-hoenn.css"> <!-- Estilos para región Hoenn -->
+
+  <!-- Fuente estilo retro tipo GameBoy -->
   <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
 </head>
-<!-- Encabezado -->
+
+<!-- Header principal, cambia según la región -->
 <header class="default-header">Pokédex</header>
+
 <body class="default-body">
-  <!-- Título principal -->
+
+  <!-- Título que indica la acción del usuario -->
   <h1 class="selection-body">Selecciona tu juego</h1>
 
-  <!-- Contenedor del carousel y flechas -->
+  <!-- Carrusel principal para seleccionar la consola y el juego -->
   <div class="carousel-main-wrapper">
-    <div class="arrow-up">⬆</div>
+    <div class="arrow-up">⬆</div> <!-- Flecha arriba para rotar el carrusel -->
     <div class="carousel-wrapper">
       <div id="gbGames" class="carousel-container">
-        <!-- JS generará las consolas y juegos aquí -->
+        <!-- Aquí se generan dinámicamente las consolas y juegos con JS -->
       </div>
     </div>
-    <div class="arrow-down">⬇</div>
+    <div class="arrow-down">⬇</div> <!-- Flecha abajo para rotar el carrusel -->
   </div>
 
-  <!-- Pokedex -->
+  <!-- Contenedor principal de la Pokédex, inicialmente oculto -->
   <div id="pokedex">
+    <!-- Encabezado de la Pokédex con carátula y nombre del juego -->
     <div id="pokedex-header">
-      <img id="game-cover" src="" alt="Carátula del juego">
-      <h2><span id="game-name">Nombre del juego</span></h2>
+      <img id="game-cover" src="" alt="Carátula del juego"> <!-- Imagen de la carátula del juego -->
+      <h2><span id="game-name">Nombre del juego</span></h2> <!-- Nombre del juego -->
     </div>
 
-
-    <!-- Contenedor dividido lista y panel de detalles -->
+    <!-- Contenido de la Pokédex: lista de Pokémon y detalles -->
     <div id="pokedex-content">
-    <!-- Lista de Pokémon con scroll retro -->
+
+      <!-- Contenedor de la lista de Pokémon -->
       <div id="pokemon-list-container">
-        <div id="pokemon-list"></div>
+        <div id="pokemon-list"></div> <!-- JS inyectará aquí los Pokémon -->
       </div>
 
-      <!-- Panel de detalles -->
+      <!-- Detalles del Pokémon seleccionado -->
       <div id="pokemon-details">
-        <h3 id="detail-name"></h3>
-        <img id="detail-sprite" src="" alt="Sprite Pokémon">
-        <p id="detail-type"></p>
-        <p id="detail-description"></p>
+        <h3 id="detail-name"></h3> <!-- Nombre y número del Pokémon -->
+        <img id="detail-sprite" src="" alt="Sprite Pokémon"> <!-- Sprite del Pokémon -->
+        <p id="detail-type"></p> <!-- Tipos del Pokémon -->
+        <p id="detail-description"></p> <!-- Descripción del Pokémon -->
       </div>
+
+    </div>
+
+    <!-- Pie de la Pokédex: botones de navegación y búsqueda -->
+    <div id="pokedex-footer">
+      <button id="backBtn">⬅ Volver</button> <!-- Volver al menú de consolas/juegos -->
+      <input type="text" id="searchInput" placeholder="Buscar Pokémon..." style="display:none;"> <!-- Input de búsqueda, oculto por defecto -->
+      <button id="searchBtn">🔍 Buscar</button> <!-- Botón para buscar Pokémon -->
+    </div>
   </div>
-  <!-- Botones inferiores -->
-  <div id="pokedex-footer">
-    <button id="backBtn" onclick="goBack()">⬅ Volver</button>
-      <!-- Input de búsqueda oculto -->
-    <input type="text" id="searchInput" placeholder="Buscar Pokémon..." style="display:none;">
 
-    <button id="searchBtn">🔍 Buscar</button>
-  </div>
-</div>
-
-
-
+  <!-- Sonido de beep al interactuar con la Pokédex -->
   <audio id="beep-sound" src="./sounds/pokemonAButton.mp3"></audio>
-  <script src="script.js"></script>
+
+  <!-- Script principal de la Pokédex -->
+  <script type="module" src="./js/main.js" defer></script>
+
 </body>
 </html>
