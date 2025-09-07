@@ -1,4 +1,4 @@
-import { setRegion } from "./utils.js";
+import { setRegion, playCRTTransition} from "./utils.js";
 import { rotateCarousel, updateSelected, centerCarouselOn } from "./carousel.js";
 import { loadPokemonList, renderPokemonList, showDetail, setCurrentGame, allPokemons, currentGame } from "./pokedex.js";
 
@@ -83,6 +83,7 @@ const consoles = [
   }
 ];
 
+
 // ----------------------------
 // GENERAR MENÚ DE JUEGOS
 function generateGameMenu() {
@@ -121,34 +122,34 @@ function generateGameMenu() {
 // ----------------------------
 // CARGAR POKÉDEX DE UN JUEGO
 async function loadPokedexGame(game, consoleObj) {
-  // Ocultar menú y mostrar Pokédex
-  menuGbGames.style.display = "none";
-  pokedex.style.display = "block";
-  carouselWrapper.style.display = "none";
-  arrowUp.style.display = "none";
-  arrowDown.style.display = "none";
-  searchInput.style.display = "block";
-  searchInput.value = "";
-  searchInput.placeholder = "Buscar Pokémon...";
+  playCRTTransition(async () => {
+    menuGbGames.style.display = "none";
+    pokedex.style.display = "block";
+    carouselWrapper.style.display = "none";
+    arrowUp.style.display = "none";
+    arrowDown.style.display = "none";
+    searchInput.style.display = "block";
+    searchInput.value = ""; 
+    searchInput.placeholder = "Buscar Pokémon...";
 
-  // Aplicar estilos según la región del juego
-  setRegion(header, consoleObj.cssClass, "header");
-  setRegion(body, consoleObj.cssClass, "body");
-  setRegion(pokedex, consoleObj.cssClass, "pokedex");
+    setRegion(header, consoleObj.cssClass, "header");
+    setRegion(body, consoleObj.cssClass, "body");
+    setRegion(pokedex, consoleObj.cssClass, "pokedex");
 
-  // Actualizar información del juego
-  selectionTitle.textContent = "Selecciona un Pokémon";
-  gameCover.src = game.cover;
-  gameCover.alt = game.title;
-  gameName.textContent = game.title;
+    selectionTitle.textContent = "Selecciona un Pokémon";
+    gameCover.src = game.cover;
+    gameCover.alt = game.title;
+    gameName.textContent = game.title;
 
-  // Guardar juego actual y cargar lista de Pokémon
-  setCurrentGame(game);
-  await loadPokemonList(game, pokemonList, { showDetail: (p) => showDetail(p, detailElements) });
+    setCurrentGame(game);
+    await loadPokemonList(game, pokemonList, {
+      showDetail: (p) => showDetail(p, detailElements)
+    });
 
-  // Foco en el input de búsqueda
-  searchInput.focus();
+    searchInput.focus();
+  });
 }
+
 
 // ----------------------------
 // BÚSQUEDA DE POKÉMON
@@ -194,28 +195,28 @@ function runSearch() {
 // ----------------------------
 // VOLVER AL MENÚ DE CONSOLAS
 function goBack() {
-  pokedex.style.display = "none";
-  menuGbGames.style.display = "flex";
-  carouselWrapper.style.display = "flex";
-  arrowUp.style.display = "block";
-  arrowDown.style.display = "block";
-  updateSelected(carouselContainer);
+  playCRTTransition(() => {
+    pokedex.style.display = "none";
+    menuGbGames.style.display = "flex";
+    carouselWrapper.style.display = "flex";
+    arrowUp.style.display = "block";
+    arrowDown.style.display = "block";
+    updateSelected(carouselContainer);
 
-  // Limpiar información de Pokémon
-  pokemonList.innerHTML = "";
-  detailElements.detailName.textContent = "";
-  detailElements.detailSprite.src = "";
-  detailElements.detailType.textContent = "";
-  detailElements.detailDescription.textContent = "";
-  searchInput.style.display = "none";
-  searchInput.value = "";
+    pokemonList.innerHTML = "";
+    detailElements.detailName.textContent = "";
+    detailElements.detailSprite.src = "";
+    detailElements.detailType.textContent = "";
+    detailElements.detailDescription.textContent = "";
+    searchInput.style.display = "none";
+    searchInput.value = "";
 
-  // Resetear estilos
-  header.classList.remove("kanto-header","johto-header","hoenn-header");
-  header.classList.add("default-header");
-  body.classList.remove("kanto-body","johto-body","hoenn-body");
-  body.classList.add("default-body");
-  selectionTitle.textContent = "Selecciona tu juego";
+    header.classList.remove("kanto-header","johto-header","hoenn-header");
+    header.classList.add("default-header");
+    body.classList.remove("kanto-body","johto-body","hoenn-body");
+    body.classList.add("default-body");
+    selectionTitle.textContent = "Selecciona tu juego";
+  });
 }
 
 // ----------------------------

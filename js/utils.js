@@ -68,3 +68,24 @@ export function translateType(type){
   // Retorna la traducción si existe, si no, devuelve el mismo tipo
   return typesES[type] || type;
 }
+// Función de transición entre pantallas (CRT apagado → encendido)
+export function playCRTTransition(loadCallback) {
+  const overlay = document.getElementById("transition-overlay");
+
+  // Bloquear todos los clicks mientras dure la transición
+  document.body.style.pointerEvents = "none";
+
+  // Activar animación CRT
+  overlay.classList.add("crt-transition");
+
+  // Ejecutar callback mientras la pantalla está negra (~30% de duración)
+  setTimeout(() => {
+    if (loadCallback) loadCallback();
+  }, 540); // ajusta según duración de tu animación
+
+  // Cuando termina la animación, limpiar clase y desbloquear clicks
+  overlay.addEventListener("animationend", () => {
+    overlay.classList.remove("crt-transition");
+    document.body.style.pointerEvents = "auto";
+  }, { once: true });
+}

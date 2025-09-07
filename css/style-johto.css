@@ -2,17 +2,27 @@
 
 /* Header Region de Johto*/
 .johto-header {
-  background-color: #2e5d27;
-  color: #fff;
-  text-shadow: 3px 3px #000;
+  background-color: #ffffff; /* fondo blanco */
+  background-image: none;
+  color: #000000;           /* texto negro */
+  border: 4px solid #000000; /* borde negro */
+  font-family: 'Press Start 2P', monospace;
+  font-size: 2rem;
+  text-align: center;
+  padding: 1rem;
+  box-sizing: border-box;
+  text-shadow: none;
+
+  transition: background-color 0.5s, color 0.5s, border-color 0.5s;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;     /* que ocupe todo el ancho */
+  z-index: 10;     /* encima de todo el contenido */
 }
+
 .johto-header::after {
-  content: '';
   position: absolute;
-  top: 3px;
-  left: 3px;
-  right: 3px;
-  bottom: 3px;
   border: 2px solid #000000;
   pointer-events: none;
 }
@@ -24,6 +34,7 @@ body.johto-body {
   background-attachment: fixed;
   background-repeat: no-repeat;
   background-size: cover;
+  padding-top: 80px; /* deja espacio para el header fijo */
 }
 .console-container.johto {
   background-color: #2e5d27;
@@ -34,6 +45,7 @@ body.johto-body {
   background-repeat: no-repeat;
   background-size: cover;
   box-sizing: border-box;
+
 }
 
 /* Botones de juego Johto */
@@ -62,20 +74,40 @@ body.johto-body {
 }
 
 /* ---------------------------- */
-/* Pokédex Johto */
+/* ----------------------------
+   Pokédex Johto
+---------------------------- */
 
-/* Contenedor principal de la Pokédex */
+/* Fondo tipo scanline retro */
+.johto-pokedex::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: repeating-linear-gradient(
+    to bottom,
+    rgba(0,0,0,0.03),
+    rgba(0,0,0,0.03) 1px,
+    transparent 1px,
+    transparent 2px
+  );
+  pointer-events: none;
+  z-index: 0;
+}
+
 .johto-pokedex {
   display: none;
   flex-direction: column;
   width: 90%;
   max-width: 900px;
   margin: 20px auto;
-  border: 5px solid #0f380f;
+  border: 5px solid #000000;
   border-radius: 10px;
-  background: #d0e0c0;
+  background: #ffffff;
   box-sizing: border-box;
-  height: auto; /* se ajusta según contenido */
+  height: auto;
+  box-shadow: inset 0 0 15px rgba(0,0,0,0.2), 0 0 8px rgba(0,0,0,0.2);
+  position: relative;
+  font-family: 'PokemonGB', monospace;
 }
 
 /* Header de la Pokédex */
@@ -84,10 +116,10 @@ body.johto-body {
   align-items: center;
   gap: 15px;
   padding: 10px;
-  border-bottom: 3px solid #0f380f;
+  border-bottom: 3px solid #000000;
 }
 
-/* Contenedor principal de lista + detalles */
+/* Contenedor principal */
 .johto-pokedex #pokedex-content {
   display: flex;
   gap: 20px;
@@ -95,16 +127,17 @@ body.johto-body {
   height: 400px;
   box-sizing: border-box;
   overflow: hidden;
+  color:#000;
 }
 
-/* Contenedor de la lista de Pokémon */
+/* Lista Pokémon */
 .johto-pokedex #pokemon-list-container {
   flex: 0.5;
-  border: 2px solid #0f380f;
+  border: 2px solid #000000;
   height: 100%;
   overflow-y: auto;
   position: relative;
-  background: #d0e0c0;
+  background: #ffffff;
   padding: 5px;
 }
 
@@ -113,27 +146,27 @@ body.johto-body {
   width: 20px;
 }
 .johto-pokedex #pokemon-list-container::-webkit-scrollbar-track {
-  background: #d0e0c0;
-  border-left: 4px solid #0f380f;
+  background: #ffffff;
+  border-left: 4px solid #000000;
 }
 .johto-pokedex #pokemon-list-container::-webkit-scrollbar-thumb {
-  background: #0f380f;
-  border: 2px solid #4a4a4a;
-  border-radius: 0;
+  background: #ffffff;
+  border: 2px solid #000000;
 }
 .johto-pokedex #pokemon-list-container::-webkit-scrollbar-thumb:hover {
-  background: #43a047;
-  border-color: #1b5e20;
+  background: #000000;
+  border-color: #000000;
 }
 
-/* Sprite del Pokémon en detalle */
+/* Sprite detalle */
 .johto-pokedex #detail-sprite {
   width: 150px;
   height: 150px;
   image-rendering: pixelated;
+  border: 2px solid #000;
 }
 
-/* Footer con botones */
+/* Footer Pokédex */
 .johto-pokedex #pokedex-footer {
   display: flex;
   gap: 10px;
@@ -142,20 +175,24 @@ body.johto-body {
   padding: 10px;
 }
 
+.johto-pokedex #pokedex-footer button,input {
+  font-family: 'PokemonGB', monospace;
+}
+
+/* Botones footer */
 .johto-pokedex #pokedex-footer button {
-  background: #f8f8f8;
+  background: #ffffff;
   border: 3px solid #000;
   border-radius: 6px;
   padding: 8px 20px;
-  font-family: 'Press Start 2P', monospace;
-  font-size: 12px;
+  font-size: clamp(10px, 2vw, 14px);
   cursor: pointer;
   transition: transform 0.2s, background 0.2s;
+  box-shadow: -2px -2px 0 #555 inset, -2px -2px 0 #fff inset;
 }
 
 .johto-pokedex #pokedex-footer button:hover {
   transform: scale(1.05);
-  background: #ddd;
 }
 
 /* Carátula del juego */
@@ -163,51 +200,30 @@ body.johto-body {
   width: 140px;
   height: 140px;
   object-fit: cover;
-  border: 2px solid #0f380f;
+  border: 2px solid #000;
+  box-shadow: inset 1px 1px 0 #fff, inset -1px -1px 0 #999;
   border-radius: 4px;
-  image-rendering: pixelated;
 }
 
-/* Input de búsqueda */
+/* Input búsqueda */
 .johto-pokedex #searchInput {
   flex: 1;
   max-width: 250px;
   padding: 6px 10px;
-  font-family: 'Press Start 2P', monospace;
-  font-size: 10px;
-  color: #222;
-  background: #f0f0f0;
+  font-size: clamp(8px, 1.5vw, 12px);
+  color: #000000;
+  background: #ffffff;
   border: 3px solid #444;
   border-radius: 6px;
   outline: none;
-  box-shadow: inset 2px 2px 0 #999, inset -2px -2px 0 #fff;
 }
 
 .johto-pokedex #searchInput:focus {
-  border-color: #ff0000;
-  box-shadow: inset 2px 2px 0 #ff7777, inset -2px -2px 0 #fff;
+  border-color: #000000;
+  box-shadow: 0 0 5px #ff0000 inset;
 }
 
-/* Botón de búsqueda */
-.johto-pokedex #searchBtn {
-  font-family: 'Press Start 2P', monospace;
-  font-size: 10px;
-  padding: 6px 12px;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  background: #ff0000;
-  color: #000000;
-  box-shadow: 2px 2px 0 #660000;
-  transition: transform 0.1s, box-shadow 0.1s;
-}
-
-.johto-pokedex #searchBtn:active {
-  transform: translate(2px, 2px);
-  box-shadow: none;
-}
-
-/* Lista de Pokémon */
+/* Lista Pokémon */
 .johto-pokedex #pokemon-list {
   display: flex;
   flex-direction: column;
@@ -217,34 +233,37 @@ body.johto-body {
   box-sizing: border-box;
 }
 
-/* Panel de detalles */
+/* Panel detalles */
 .johto-pokedex #pokemon-details {
   flex: 1;
-  border: 2px solid #0f380f;
+  border: 2px solid #000000;
   padding: 10px;
   text-align: center;
   overflow-y: visible;
 }
 
-/* Cada Pokémon */
+/* Slots Pokémon */
 .johto-pokedex .pokemon-slot {
   display: flex;
   align-items: center;
   padding: 6px 10px;
-  background: #e0f8d0;
-  border: 2px solid #0f380f;
-  font-size: 10px;
+  background: #d1d1d1;
+  border: 2px solid #808080;
+  font-size: clamp(8px, 1.5vw, 12px);
   cursor: pointer;
   transition: background 0.2s, border-color 0.2s;
+  box-shadow: inset 1px 1px 0 #fff, inset -1px -1px 0 #999;
 }
 
 .johto-pokedex .pokemon-slot:hover {
-  background: #cce6b8;
+  background: #eeeeee;
+  border-color: #000000;
+  box-shadow: 0 0 5px rgba(0,0,0,0.5);
 }
 
 .johto-pokedex .pokemon-slot.selected-slot {
-  border: 2px solid red;
-  background: #fff4f4;
+  border: 2px solid #000;
+  background: #ffffff;
 }
 
 .johto-pokedex .pokemon-slot strong {

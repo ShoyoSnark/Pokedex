@@ -222,6 +222,42 @@ header.default-header {
 
 .games button p { margin: 0.5rem 0 0; }
 
+/* Overlay para transiciones de escena */
+#transition-overlay {
+  position: fixed;
+  inset: 0;
+  pointer-events: none; /* bloquea clicks mientras dure */
+  z-index: 99999;
+  background: black;
+  opacity: 0;
+  transform: scaleY(1);
+
+
+}
+/* Clase que dispara la animación CRT apagado → encendido */
+.crt-transition {
+  animation: crtOffOn 1.8s ease-in-out forwards;
+}
+
+@keyframes crtOffOn {
+  0% {
+    opacity: 0;
+    transform: scaleY(0);
+  }
+  30% {
+    opacity: 1;
+    transform: scaleY(1); /* pantalla negra + scanlines visibles */
+  }
+  50% {
+    opacity: 1;
+    transform: scaleY(1); /* pantalla negra sostenida */
+  }
+  100% {
+    opacity: 0;
+    transform: scaleY(0); /* desaparece revelando la pantalla del juego */
+  }
+}
+
 /* ---------------------------- */
 
 /* Carousel responsivo */
